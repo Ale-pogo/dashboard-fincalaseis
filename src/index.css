@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+/* Configuración personalizada de la paleta verde para Tailwind v4 */
+@theme {
+  --color-verde-bosque: #1b4332;
+  --color-verde-esmeralda: #2d6a4f;
+  --color-verde-menta: #52b788;
+  --color-verde-claro: #d8f3dc;
+  --color-fondo-sitio: #f7f9f6;
+
+  --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
