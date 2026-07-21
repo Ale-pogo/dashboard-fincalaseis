@@ -1,16 +1,101 @@
-# React + Vite
+# Dashboard Agrícola 2026
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema de análisis de datos agrícolas con dashboard interactivo basado en archivos Excel.
 
-Currently, two official plugins are available:
+## 📊 Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Dashboard interactivo con visualizaciones en tiempo real
+- Análisis de tres fuentes de datos Excel:
+  - Gastos semanales
+  - Pedidos de químicos campaña 2026
+  - Requerimientos de compras
+- Acceso desde cualquier PC en la red local
+- Interfaz moderna con Tailwind CSS y Recharts
 
-## React Compiler
+## 🚀 Instalación y Ejecución
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Instalación inicial
+```bash
+npm install
+```
 
-## Expanding the ESLint configuration
+### Desarrollo local
+```bash
+npm run dev
+```
+Accede a `http://localhost:5173` en tu navegador.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Producción - Acceso desde la red local
+
+#### Opción 1: Ejecución rápida (Build + Servidor)
+```bash
+npm run build-start
+```
+
+#### Opción 2: Pasos separados
+```bash
+# Compilar la aplicación
+npm run build
+
+# Iniciar el servidor
+npm start
+```
+
+### 📱 Acceso
+
+- **Este PC**: `http://localhost:3000`
+- **Otros PCs en la red**: Reemplaza `192.168.18.12` con tu IP local
+  ```
+  http://192.168.18.12:3000
+  ```
+
+Para encontrar tu IP local, ejecuta en Windows:
+```powershell
+ipconfig
+```
+Busca "IPv4" bajo tu adaptador de red activo.
+
+## 📁 Estructura del Proyecto
+
+```
+src/
+├── components/     # Componentes reutilizables
+├── features/       # Dashboards específicos (compras, gastos, químicos)
+├── hooks/          # Hooks personalizados (lectura de Excel)
+├── styles/         # Estilos CSS
+public/
+├── data/           # Archivos Excel (fuentes de datos)
+dist/              # Aplicación compilada (generada con build)
+```
+
+## 🔧 Scripts disponibles
+
+- `npm run dev` - Inicia servidor de desarrollo
+- `npm run build` - Compila la aplicación para producción
+- `npm start` - Inicia servidor Express para acceso en red
+- `npm run build-start` - Compila e inicia servidor de una vez
+- `npm run preview` - Vista previa de la versión compilada
+- `npm run lint` - Ejecuta validación de código
+
+## 📊 Archivos de datos
+
+Los archivos Excel deben estar en `public/data/`:
+- `Gastos semanaless.xlsx`
+- `pedido quimicos campaña 2026 valorizado.xlsx`
+- `Requerimiento - Compras.xlsx`
+
+## 🛠️ Tecnologías
+
+- **React 19** - Framework UI
+- **Vite** - Herramienta de build
+- **Tailwind CSS** - Estilos
+- **Recharts** - Gráficos
+- **XLSX** - Lectura de archivos Excel
+- **Express** - Servidor Node.js
+- **Lucide React** - Iconos
+
+## 📝 Notas
+
+- El servidor escucha en todas las interfaces de red (0.0.0.0:3000)
+- Los archivos Excel se cargan desde el navegador usando fetch
+- La aplicación es una SPA (Single Page Application)
