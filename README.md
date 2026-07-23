@@ -94,7 +94,24 @@ Los archivos Excel deben estar en `public/data/`:
 - **Express** - Servidor Node.js
 - **Lucide React** - Iconos
 
-## 📝 Notas
+## � Despliegue en Vercel
+
+Este proyecto ya está preparado para desplegarse en Vercel.
+
+### Pasos
+1. Sube el proyecto a GitHub.
+2. Inicia sesión en Vercel.
+3. Crea un nuevo proyecto y selecciona el repositorio.
+4. Usa estas opciones:
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+5. Haz clic en Deploy.
+
+### Importante
+- Los archivos Excel en [public/data](public/data) se publicarán junto con la app.
+- El archivo [vercel.json](vercel.json) ayuda a que las rutas internas de la SPA funcionen correctamente.
+
+## �📝 Notas
 
 - El servidor escucha en todas las interfaces de red (0.0.0.0:3000)
 - Los archivos Excel se cargan desde el navegador usando fetch
