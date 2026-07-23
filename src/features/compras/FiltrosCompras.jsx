@@ -37,7 +37,7 @@ export const FiltrosCompras = ({
             value={filters.solicita}
             onChange={(e) => handleFilterChange('solicita', e.target.value)}
           >
-            <option value="Todos">Todos (Planta, Bodega, Campo, Ventas)</option>
+            <option value="Todos">Todos</option>
             {solicitaOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
           </select>
         </div>

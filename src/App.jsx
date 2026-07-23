@@ -7,26 +7,18 @@ import { SharedSummary } from './components/SharedSummary';
 import ThemeToggle from './components/ThemeToggle';
 import logoCha from './assets/logo_cha.svg';
 import logoLaSeis from './assets/logo La Seis.svg';
-import oliva1 from './assets/oliva1.svg';
-import oliva2 from './assets/oliva2.svg';
-import oliva3 from './assets/oliva3.svg';
 
 function App() {
   const [activeModule, setActiveModule] = useState('compras');
 
   return (
-    <div className="min-h-screen bg-fondo-sitio font-sans flex">
+    <div className="min-h-screen bg-fondo-sitio font-sans flex flex-col md:flex-row">
       {/* Barra Lateral Izquierda (Sidebar) */}
-      <aside className="relative w-64 bg-verde-bosque text-white flex flex-col shadow-xl overflow-hidden">
+      <aside className="relative w-full md:w-64 bg-verde-bosque text-white flex flex-col shadow-xl overflow-hidden md:min-h-screen">
         <div className="absolute inset-0 bg-gradient-to-br from-green-950/70 via-green-900/40 to-green-800/70" />
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <img src={oliva1} alt="" className="absolute -left-3 top-10 w-28 h-28 opacity-80 grayscale-[0.2] saturate-0 brightness-[1.2] hue-rotate-[20deg] rotate-[-8deg]" />
-          <img src={oliva2} alt="" className="absolute right-3 top-28 w-24 h-24 opacity-70 grayscale-[0.2] saturate-0 brightness-[1.2] hue-rotate-[20deg]" />
-          <img src={oliva3} alt="" className="absolute left-7 bottom-28 w-32 h-32 opacity-75 grayscale-[0.2] saturate-0 brightness-[1.2] hue-rotate-[20deg] rotate-[10deg]" />
-        </div>
 
         <div className="relative z-10 p-5 border-b border-green-800 flex flex-col items-center text-center">
-          <img src={logoLaSeis} alt="Logo La Seis" className="h-32 w-auto mb-2" />
+          <img src={logoLaSeis} alt="Logo La Seis" className="h-28 w-auto mb-2" />
           <p className="text-xs text-green-400 italic">Agropecuaria Riojana</p>
         </div>
         
@@ -66,7 +58,7 @@ function App() {
       </aside>
 
       {/* Área de Contenido Principal */}
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto">
         <div className="mb-4 flex justify-end">
           <ThemeToggle />
         </div>

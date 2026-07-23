@@ -37,6 +37,13 @@ export const GastosDashboard = () => {
   const [selectedSemana, setSelectedSemana] = useState('Todos');
   const [selectedView, setSelectedView] = useState('deudas');
   const [selectedChartFilter, setSelectedChartFilter] = useState(null);
+  const [tableFilters, setTableFilters] = useState({
+    proveedor: '',
+    rubro: '',
+    via: '',
+    formaPago: '',
+    importe: ''
+  });
 
   const semanas = useMemo(() => {
     const lista = [...new Set(data.map(item => item.semana).filter(Boolean))];
@@ -63,12 +70,40 @@ export const GastosDashboard = () => {
   const datosPorRubro = useMemo(() => mapGroupData(agruparPor(filteredData, 'rubro')), [filteredData]);
   const datosPorVia = useMemo(() => mapGroupData(agruparPor(filteredData, 'via')), [filteredData]);
 
-  const detalleData = useMemo(() => {
-    if (!selectedChartFilter) return filteredData;
+  const uniqueFilterValues = useMemo(() => ({
+    proveedor: [...new Set(filteredData.map(item => String(item.proveedor || '').trim()).filter(Boolean))].sort(),
+    rubro: [...new Set(filteredData.map(item => String(item.rubro || '').trim()).filter(Boolean))].sort(),
+    via: [...new Set(filteredData.map(item => String(item.via || '').trim()).filter(Boolean))].sort(),
+    formaPago: [...new Set(filteredData.map(item => String(item.formaPago || '').trim()).filter(Boolean))].sort(),
+  }), [filteredData]);
 
-    const { field, value } = selectedChartFilter;
-    return filteredData.filter((item) => String(item[field] ?? '') === String(value));
-  }, [filteredData, selectedChartFilter]);
+  const detalleData = useMemo(() => {
+    let items = selectedChartFilter
+      ? filteredData.filter((item) => String(item[selectedChartFilter.field] ?? '') === String(selectedChartFilter.value))
+      : filteredData;
+
+    if (tableFilters.proveedor) {
+      items = items.filter((item) => String(item.proveedor || '').toLowerCase().includes(tableFilters.proveedor.toLowerCase()));
+    }
+    if (tableFilters.rubro) {
+      items = items.filter((item) => String(item.rubro || '').toLowerCase().includes(tableFilters.rubro.toLowerCase()));
+    }
+    if (tableFilters.via) {
+      items = items.filter((item) => String(item.via || '').toLowerCase().includes(tableFilters.via.toLowerCase()));
+    }
+    if (tableFilters.formaPago) {
+      items = items.filter((item) => String(item.formaPago || '').toLowerCase().includes(tableFilters.formaPago.toLowerCase()));
+    }
+    if (tableFilters.importe) {
+      items = items.filter((item) => String(item.importe || '').toLowerCase().includes(tableFilters.importe.toLowerCase()));
+    }
+
+    return items;
+  }, [filteredData, selectedChartFilter, tableFilters]);
+
+  const handleTableFilterChange = (key, value) => {
+    setTableFilters(prev => ({ ...prev, [key]: value }));
+  };
 
   const tooltipFormatter = (value, name, props) => [
     `${currencyFormatter.format(value)} (${props.payload?.percentage ?? 0}%)`,
@@ -199,11 +234,78 @@ export const GastosDashboard = () => {
               <table className="w-full text-left border-collapse text-sm">
                 <thead>
                   <tr className="bg-green-50 text-verde-bosque font-bold border-b border-green-100">
-                    <th className="p-3">Proveedor</th>
-                    <th className="p-3">Rubro</th>
-                    <th className="p-3">Vía</th>
-                    <th className="p-3">Forma de pago</th>
-                    <th className="p-3 text-right">Importe U$D</th>
+                    <th className="p-3 align-top">
+                      <div className="flex flex-col gap-2">
+                        <span>Proveedor</span>
+                        <select
+                          value={tableFilters.proveedor}
+                          onChange={(e) => handleTableFilterChange('proveedor', e.target.value)}
+                          className="w-full rounded border border-green-200 bg-white px-2 py-1 text-xs text-gray-700"
+                        >
+                          <option value="">Todos</option>
+                          {uniqueFilterValues.proveedor.map((value) => (
+                            <option key={value} value={value}>{value}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </th>
+                    <th className="p-3 align-top">
+                      <div className="flex flex-col gap-2">
+                        <span>Rubro</span>
+                        <select
+                          value={tableFilters.rubro}
+                          onChange={(e) => handleTableFilterChange('rubro', e.target.value)}
+                          className="w-full rounded border border-green-200 bg-white px-2 py-1 text-xs text-gray-700"
+                        >
+                          <option value="">Todos</option>
+                          {uniqueFilterValues.rubro.map((value) => (
+                            <option key={value} value={value}>{value}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </th>
+                    <th className="p-3 align-top">
+                      <div className="flex flex-col gap-2">
+                        <span>Vía</span>
+                        <select
+                          value={tableFilters.via}
+                          onChange={(e) => handleTableFilterChange('via', e.target.value)}
+                          className="w-full rounded border border-green-200 bg-white px-2 py-1 text-xs text-gray-700"
+                        >
+                          <option value="">Todos</option>
+                          {uniqueFilterValues.via.map((value) => (
+                            <option key={value} value={value}>{value}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </th>
+                    <th className="p-3 align-top">
+                      <div className="flex flex-col gap-2">
+                        <span>Forma de pago</span>
+                        <select
+                          value={tableFilters.formaPago}
+                          onChange={(e) => handleTableFilterChange('formaPago', e.target.value)}
+                          className="w-full rounded border border-green-200 bg-white px-2 py-1 text-xs text-gray-700"
+                        >
+                          <option value="">Todos</option>
+                          {uniqueFilterValues.formaPago.map((value) => (
+                            <option key={value} value={value}>{value}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </th>
+                    <th className="p-3 align-top text-right">
+                      <div className="flex flex-col gap-2 items-end">
+                        <span>Importe U$D</span>
+                        <input
+                          type="text"
+                          value={tableFilters.importe}
+                          onChange={(e) => handleTableFilterChange('importe', e.target.value)}
+                          placeholder="Filtrar"
+                          className="w-full rounded border border-green-200 bg-white px-2 py-1 text-xs text-gray-700 text-right"
+                        />
+                      </div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-green-50">

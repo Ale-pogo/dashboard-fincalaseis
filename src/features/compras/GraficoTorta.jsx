@@ -104,8 +104,8 @@ export const GraficoTorta = ({
               data={chartData}
               cx="50%"
               cy="45%"
-              innerRadius={52}
-              outerRadius={76}
+              innerRadius="45%"
+              outerRadius="70%"
               paddingAngle={12}
               dataKey="value"
               labelLine={false}
@@ -118,9 +118,9 @@ export const GraficoTorta = ({
               <LabelList
                 dataKey="percentage"
                 position="outside"
-                offset={18}
+                offset={10}
                 formatter={(value) => `${value}%`}
-                style={{ fill: '#166534', fontSize: 12, fontWeight: 600 }}
+                style={{ fill: '#166534', fontSize: 11, fontWeight: 600 }}
               />
             </Pie>
             <Tooltip

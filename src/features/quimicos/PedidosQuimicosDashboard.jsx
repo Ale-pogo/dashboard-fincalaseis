@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { RefreshCw, FlaskConical, CheckCircle2, Clock3 } from 'lucide-react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import { useQuimicosReader } from '../../hooks/useQuimicosReader';
@@ -49,6 +49,12 @@ export const PedidosQuimicosDashboard = () => {
   }, [data]);
 
   const porSector = useMemo(() => getChartData(data, 'sector'), [data]);
+  const [tableFilters, setTableFilters] = useState({
+    sector: '',
+    articulo: '',
+    estado: ''
+  });
+
   const datosDetalle = useMemo(
     () => data.map((item) => ({
       sector: item.sector,
@@ -60,6 +66,25 @@ export const PedidosQuimicosDashboard = () => {
     })),
     [data]
   );
+
+  const uniqueFilterValues = useMemo(() => ({
+    sector: [...new Set(datosDetalle.map(item => String(item.sector || '').trim()).filter(Boolean))].sort(),
+    articulo: [...new Set(datosDetalle.map(item => String(item.articulo || '').trim()).filter(Boolean))].sort(),
+    estado: [...new Set(datosDetalle.map(item => String(item.estado || '').trim()).filter(Boolean))].sort(),
+  }), [datosDetalle]);
+
+  const datosDetalleFiltrados = useMemo(() => {
+    return datosDetalle.filter((item) => {
+      const sectorMatches = !tableFilters.sector || String(item.sector || '').toLowerCase().includes(tableFilters.sector.toLowerCase());
+      const articuloMatches = !tableFilters.articulo || String(item.articulo || '').toLowerCase().includes(tableFilters.articulo.toLowerCase());
+      const estadoMatches = !tableFilters.estado || String(item.estado || '').toLowerCase().includes(tableFilters.estado.toLowerCase());
+      return sectorMatches && articuloMatches && estadoMatches;
+    });
+  }, [datosDetalle, tableFilters]);
+
+  const handleTableFilterChange = (key, value) => {
+    setTableFilters(prev => ({ ...prev, [key]: value }));
+  };
 
   const chartTooltip = (value, name, props) => [`${value} (${props.payload?.percentage ?? 0}%)`, name];
 
@@ -223,21 +248,63 @@ export const PedidosQuimicosDashboard = () => {
               <table className="w-full text-left border-collapse text-sm">
                 <thead>
                   <tr className="bg-green-50 text-verde-bosque font-bold border-b border-green-100">
-                    <th className="p-3">Sector</th>
+                    <th className="p-3 align-top">
+                      <div className="flex flex-col gap-2">
+                        <span>Sector</span>
+                        <select
+                          value={tableFilters.sector}
+                          onChange={(e) => handleTableFilterChange('sector', e.target.value)}
+                          className="w-full rounded border border-green-200 bg-white px-2 py-1 text-xs text-gray-700"
+                        >
+                          <option value="">Todos</option>
+                          {uniqueFilterValues.sector.map((value) => (
+                            <option key={value} value={value}>{value}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </th>
                     <th className="p-3">Cantidad</th>
                     <th className="p-3">U/M</th>
-                    <th className="p-3">Articulo</th>
+                    <th className="p-3 align-top">
+                      <div className="flex flex-col gap-2">
+                        <span>Articulo</span>
+                        <select
+                          value={tableFilters.articulo}
+                          onChange={(e) => handleTableFilterChange('articulo', e.target.value)}
+                          className="w-full rounded border border-green-200 bg-white px-2 py-1 text-xs text-gray-700"
+                        >
+                          <option value="">Todos</option>
+                          {uniqueFilterValues.articulo.map((value) => (
+                            <option key={value} value={value}>{value}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </th>
                     <th className="p-3 text-right">Total</th>
-                    <th className="p-3">Estado</th>
+                    <th className="p-3 align-top">
+                      <div className="flex flex-col gap-2">
+                        <span>Estado</span>
+                        <select
+                          value={tableFilters.estado}
+                          onChange={(e) => handleTableFilterChange('estado', e.target.value)}
+                          className="w-full rounded border border-green-200 bg-white px-2 py-1 text-xs text-gray-700"
+                        >
+                          <option value="">Todos</option>
+                          {uniqueFilterValues.estado.map((value) => (
+                            <option key={value} value={value}>{value}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-green-50">
-                  {datosDetalle.length === 0 ? (
+                  {datosDetalleFiltrados.length === 0 ? (
                     <tr>
                       <td colSpan="6" className="p-8 text-center text-gray-400 italic">No hay registros para mostrar.</td>
                     </tr>
                   ) : (
-                    datosDetalle.map((item, index) => (
+                    datosDetalleFiltrados.map((item, index) => (
                       <tr key={`${item.articulo}-${index}`} className="hover:bg-green-50/50 transition-colors">
                         <td className="p-3 text-gray-700">{item.sector}</td>
                         <td className="p-3 text-gray-700">{item.cantidad}</td>
