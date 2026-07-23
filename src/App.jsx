@@ -4,6 +4,7 @@ import { GastosDashboard } from './features/gasto/GastosDashboard';
 import { ShoppingCart, BarChart3, FlaskConical } from 'lucide-react';
 import { PedidosQuimicosDashboard } from './features/quimicos/PedidosQuimicosDashboard';
 import { SharedSummary } from './components/SharedSummary';
+import ThemeToggle from './components/ThemeToggle';
 import logoCha from './assets/logo_cha.svg';
 import logoLaSeis from './assets/logo La Seis.svg';
 import oliva1 from './assets/oliva1.svg';
@@ -66,6 +67,9 @@ function App() {
 
       {/* Área de Contenido Principal */}
       <main className="flex-1 p-8 overflow-y-auto">
+        <div className="mb-4 flex justify-end">
+          <ThemeToggle />
+        </div>
         <SharedSummary />
         {activeModule === 'compras' && <ComprasDashboard />}
         {activeModule === 'gastos' && <GastosDashboard />}
