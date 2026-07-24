@@ -7,6 +7,41 @@
   --color-verde-menta: #52b788;
   --color-verde-claro: #d8f3dc;
   --color-fondo-sitio: #f7f9f6;
+  --color-text: #0f1720;
+  --color-surface: #ffffff;
+  --color-border: #cbd5e1;
+  --color-muted: #475569;
 
   --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-fondo-sitio);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+/* Tema oscuro: cambia variables en runtime con `document.documentElement.setAttribute('data-theme','dark')` */
+[data-theme="dark"] {
+  --color-verde-bosque: #f3f7f2;
+  --color-verde-esmeralda: #57b884;
+  --color-verde-menta: #7be0a2;
+  --color-verde-claro: #123124;
+  --color-fondo-sitio: #0f1720;
+  --color-text: #f8fafc;
+  --color-surface: #0f1720;
+  --color-border: #334155;
+  --color-muted: #94a3b8;
 }
