@@ -77,16 +77,23 @@ export const SharedSummary = () => {
         <p className="text-sm text-gray-500">Se actualiza desde los tres módulos Excel.</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5 auto-rows-fr">
         {summaryCards.map((card) => {
           const Icon = card.icon;
           return (
-            <div key={card.key} className="rounded-3xl border border-green-100 bg-white p-4 shadow-xs">
-              <div className="flex items-center justify-between">
-                <p className="text-xs uppercase tracking-[0.3em] text-gray-500">{card.label}</p>
-                {Icon ? <Icon className="w-6 h-6 text-gray-400" /> : null}
+            <div
+              key={card.key}
+              className="flex h-full min-h-[132px] flex-col justify-between overflow-hidden rounded-3xl border border-green-100 bg-white p-4 shadow-xs"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-[10px] uppercase tracking-[0.3em] text-gray-500 break-words leading-tight sm:text-xs">
+                  {card.label}
+                </p>
+                {Icon ? <Icon className="h-6 w-6 shrink-0 text-gray-400" /> : null}
               </div>
-              <p className="mt-3 text-2xl font-bold text-verde-bosque">{card.formatter(summary[card.key] ?? 0)}</p>
+              <p className="mt-3 text-lg font-bold leading-tight break-words text-verde-bosque sm:text-xl xl:text-2xl">
+                {card.formatter(summary[card.key] ?? 0)}
+              </p>
             </div>
           );
         })}
