@@ -20,7 +20,7 @@ function App() {
 
           <div className="relative z-10 p-4 sm:p-5 border-b border-green-800/70 flex flex-col items-center text-center">
             <img src={logoLaSeis} alt="Logo La Seis" className="h-20 w-auto sm:h-24 lg:h-28 mb-2" />
-            <p className="text-xs text-green-300 italic">Agropecuaria R.</p>
+            <p className="text-xs text-green-300 italic">Agropecuaria Riojana.</p>
           </div>
 
           <nav className="relative z-10 flex-1 p-4 sm:p-5 space-y-2 overflow-y-auto">
