@@ -8,6 +8,15 @@ const currencyFormatter = new Intl.NumberFormat('es-AR', {
   minimumFractionDigits: 2,
 });
 
+const getValueFontSize = (value) => {
+  const length = String(value).replace(/\s+/g, '').length;
+
+  if (length > 24) return '0.82rem';
+  if (length > 18) return '0.95rem';
+  if (length > 12) return '1.05rem';
+  return '1.2rem';
+};
+
 const summaryCards = [
   {
     key: 'deudaProveedoresUSD',
@@ -77,23 +86,29 @@ export const SharedSummary = () => {
         <p className="text-sm text-gray-500">Se actualiza desde los tres módulos Excel.</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5 auto-rows-fr">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 auto-rows-fr">
         {summaryCards.map((card) => {
           const Icon = card.icon;
+          const valueText = card.formatter(summary[card.key] ?? 0);
           return (
             <div
               key={card.key}
-              className="flex h-full min-h-[132px] flex-col justify-between overflow-hidden rounded-3xl border border-green-100 bg-white p-4 shadow-xs"
+              className="flex h-full min-h-[132px] min-w-0 flex-col justify-between overflow-hidden rounded-3xl border border-green-100 bg-white p-3 shadow-xs sm:p-4"
             >
-              <div className="flex items-start justify-between gap-2">
-                <p className="text-[9px] uppercase tracking-[0.3em] text-gray-500 break-words leading-tight sm:text-xs xl:text-[10px]">
+              <div className="flex min-w-0 items-start justify-between gap-2">
+                <p className="min-w-0 flex-1 text-[9px] uppercase tracking-[0.3em] break-words leading-tight text-gray-500 sm:text-xs xl:text-[10px]">
                   {card.label}
                 </p>
                 {Icon ? <Icon className="h-5 w-5 shrink-0 text-gray-400 sm:h-6 sm:w-6" /> : null}
               </div>
-              <p className="mt-3 text-sm font-bold leading-tight break-words text-verde-bosque sm:text-base xl:text-sm">
-                {card.formatter(summary[card.key] ?? 0)}
-              </p>
+              <div className="mt-3 flex flex-1 items-end">
+                <p
+                  className="w-full min-w-0 overflow-hidden text-left font-bold leading-snug text-verde-bosque [overflow-wrap:anywhere] break-words hyphens-auto"
+                  style={{ fontSize: getValueFontSize(valueText) }}
+                >
+                  {valueText}
+                </p>
+              </div>
             </div>
           );
         })}
