@@ -86,12 +86,12 @@ export const SharedSummary = () => {
               className="flex h-full min-h-[132px] flex-col justify-between overflow-hidden rounded-3xl border border-green-100 bg-white p-4 shadow-xs"
             >
               <div className="flex items-start justify-between gap-2">
-                <p className="text-[10px] uppercase tracking-[0.3em] text-gray-500 break-words leading-tight sm:text-xs">
+                <p className="text-[9px] uppercase tracking-[0.3em] text-gray-500 break-words leading-tight sm:text-xs xl:text-[10px]">
                   {card.label}
                 </p>
-                {Icon ? <Icon className="h-6 w-6 shrink-0 text-gray-400" /> : null}
+                {Icon ? <Icon className="h-5 w-5 shrink-0 text-gray-400 sm:h-6 sm:w-6" /> : null}
               </div>
-              <p className="mt-3 text-lg font-bold leading-tight break-words text-verde-bosque sm:text-xl xl:text-2xl">
+              <p className="mt-3 text-sm font-bold leading-tight break-words text-verde-bosque sm:text-base xl:text-sm">
                 {card.formatter(summary[card.key] ?? 0)}
               </p>
             </div>

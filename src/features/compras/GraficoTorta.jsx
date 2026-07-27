@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   PieChart,
   Pie,
@@ -50,6 +50,38 @@ export const GraficoTorta = ({
 
   const chartData = procesarDatosGrafico();
 
+  // Medir el ancho del contenedor para escalar textos responsivamente
+  const containerRef = useRef(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const updateWidth = () => {
+      setContainerWidth(el.getBoundingClientRect().width);
+    };
+
+    updateWidth();
+
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(el);
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Tamaños de fuente responsivos (con fallback para el render inicial)
+  const width = Math.max(containerWidth, 200);
+  const tickFontSize = Math.max(8, Math.min(12, Math.round(width / 25)));
+  const labelFontSize = Math.max(8, Math.min(11, Math.round(width / 28)));
+  const legendFontSize = Math.max(10, Math.min(12, Math.round(width / 30)));
+
+  // Truncar nombres largos en los ejes para evitar solapamientos
+  const truncateName = (name) => {
+    if (!name) return '';
+    return name.length > 18 ? `${name.substring(0, 18)}...` : name;
+  };
+
   if (chartData.length === 0) {
     return (
       <div className="bg-white p-6 rounded-xl border border-green-100 flex items-center justify-center h-64 text-gray-400">
@@ -60,18 +92,30 @@ export const GraficoTorta = ({
 
   if (chartType === 'bar') {
     return (
-      <div className="bg-white p-4 rounded-xl shadow-xs border border-green-100 h-full">
+      <div ref={containerRef} className="bg-white p-4 rounded-xl shadow-xs border border-green-100 h-full">
         {title && (
           <h3 className="text-sm font-bold text-verde-bosque uppercase tracking-wide mb-4">
             {title}
           </h3>
         )}
-        <div className="h-60">
+        <div className="h-60 sm:h-72">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 20, right: 10, left: 0, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fontSize: 12 }} />
-              <YAxis allowDecimals={false} tickLine={false} axisLine={false} />
+              <XAxis
+                dataKey="name"
+                tickLine={false}
+                axisLine={false}
+                tick={{ fontSize: tickFontSize }}
+                minTickGap={10}
+                tickFormatter={truncateName}
+              />
+              <YAxis
+                allowDecimals={false}
+                tickLine={false}
+                axisLine={false}
+                tick={{ fontSize: tickFontSize }}
+              />
               <Tooltip
                 formatter={formatTooltip}
                 contentStyle={{ backgroundColor: '#f7f9f6', borderColor: '#d8f3dc', borderRadius: '8px' }}
@@ -84,7 +128,12 @@ export const GraficoTorta = ({
                 {chartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORES_VERDES[index % COLORES_VERDES.length]} />
                 ))}
-                <LabelList dataKey="percentage" position="top" formatter={(value) => `${value}%`} />
+                <LabelList
+                  dataKey="percentage"
+                  position="top"
+                  formatter={(value) => `${value}%`}
+                  style={{ fill: '#166534', fontSize: labelFontSize, fontWeight: 600 }}
+                />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -94,13 +143,13 @@ export const GraficoTorta = ({
   }
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-xs border border-green-100">
+    <div ref={containerRef} className="bg-white p-4 rounded-xl shadow-xs border border-green-100">
       {title && (
         <h3 className="text-sm font-bold text-verde-bosque uppercase tracking-wide mb-2">
           {title}
         </h3>
       )}
-      <div className="h-60">
+      <div className="h-60 sm:h-72">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -123,14 +172,21 @@ export const GraficoTorta = ({
                 position="outside"
                 offset={10}
                 formatter={(value) => `${value}%`}
-                style={{ fill: '#166534', fontSize: 11, fontWeight: 600 }}
+                style={{ fill: '#166534', fontSize: labelFontSize, fontWeight: 600 }}
               />
             </Pie>
             <Tooltip
               formatter={formatTooltip}
               contentStyle={{ backgroundColor: '#f7f9f6', borderColor: '#d8f3dc', borderRadius: '8px' }}
             />
-            {showLegend && <Legend verticalAlign="bottom" height={36} iconType="circle" />}
+            {showLegend && (
+              <Legend
+                verticalAlign="bottom"
+                height={36}
+                iconType="circle"
+                wrapperStyle={{ fontSize: legendFontSize }}
+              />
+            )}
           </PieChart>
         </ResponsiveContainer>
       </div>
