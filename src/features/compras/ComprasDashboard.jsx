@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useExcelReader } from '../../hooks/useExcelReader';
 import { FiltrosCompras } from './FiltrosCompras';
-import { GraficoTorta } from './GraficoTorta';
+import { GraficoTorta, COLORES_VERDES } from './GraficoTorta';
 import { GrillaData } from './GrillaData';
 import { RefreshCw } from 'lucide-react';
 
@@ -94,6 +94,9 @@ export const ComprasDashboard = () => {
 
   const segmentos = ['Planta', 'Bodega', 'Campo', 'Ventas'];
 
+  // Estados únicos de los datos filtrados, ordenados alfabéticamente para colores consistentes
+  const estadosUnicos = [...new Set(dataFiltered.map(item => item.estado || 'No especificado'))].sort();
+
   return (
     <div>
       <div className="mb-6">
@@ -116,6 +119,18 @@ export const ComprasDashboard = () => {
           <h3 className="text-sm font-bold text-verde-bosque uppercase tracking-wide mb-3">
             Distribución Porcentual (Segmento Seleccionado)
           </h3>
+          {/* Leyenda compartida de estados — fuera de las tarjetas para aprovechar espacio del gráfico */}
+          <div className="flex flex-wrap gap-3 mb-4">
+            {estadosUnicos.map((estado, index) => (
+              <div key={estado} className="flex items-center gap-2">
+                <span
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: COLORES_VERDES[index % COLORES_VERDES.length] }}
+                />
+                <span className="text-xs text-gray-600">{estado}</span>
+              </div>
+            ))}
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
             {segmentos.map(segmento => {
               const datosSegmento = dataFiltered.filter(item => item.solicita === segmento);
@@ -126,6 +141,7 @@ export const ComprasDashboard = () => {
                   title={segmento}
                   groupBy="estado"
                   emptyMessage={`Sin datos para ${segmento}`}
+                  showLegend={false}
                 />
               );
             })}

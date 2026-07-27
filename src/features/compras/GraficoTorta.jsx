@@ -14,7 +14,7 @@ import {
   LabelList,
 } from 'recharts';
 
-const COLORES_VERDES = ['#1b4332', '#2d6a4f', '#40916c', '#52b788', '#74c69d', '#95d5b2'];
+export const COLORES_VERDES = ['#1b4332', '#2d6a4f', '#40916c', '#52b788', '#74c69d', '#95d5b2'];
 
 export const GraficoTorta = ({
   dataFiltered,
@@ -24,6 +24,7 @@ export const GraficoTorta = ({
   chartType = 'pie',
   tooltipFormatter,
   onChartClick,
+  showLegend = true,
 }) => {
   const formatTooltip = tooltipFormatter || ((value, name, props) => [`${value} (${props.payload?.percentage ?? 0}%)`, name]);
 
@@ -38,11 +39,13 @@ export const GraficoTorta = ({
 
     const total = Object.values(conteo).reduce((sum, value) => sum + value, 0);
 
-    return Object.keys(conteo).map(key => ({
-      name: key,
-      value: conteo[key],
-      percentage: total > 0 ? Number(((conteo[key] / total) * 100).toFixed(1)) : 0,
-    }));
+    return Object.keys(conteo)
+      .map(key => ({
+        name: key,
+        value: conteo[key],
+        percentage: total > 0 ? Number(((conteo[key] / total) * 100).toFixed(1)) : 0,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
   };
 
   const chartData = procesarDatosGrafico();
@@ -127,7 +130,7 @@ export const GraficoTorta = ({
               formatter={formatTooltip}
               contentStyle={{ backgroundColor: '#f7f9f6', borderColor: '#d8f3dc', borderRadius: '8px' }}
             />
-            <Legend verticalAlign="bottom" height={36} iconType="circle" />
+            {showLegend && <Legend verticalAlign="bottom" height={36} iconType="circle" />}
           </PieChart>
         </ResponsiveContainer>
       </div>

@@ -65,10 +65,10 @@ function App() {
         </main>
       </div>
 
-      <footer className="bg-[color:var(--color-surface)] border-t border-[color:var(--color-border)] text-[color:var(--color-text)]">
+      <footer className="bg-[#0d2420] border-t border-[#1b4332] text-[#f5d76e]">
         <div className="mx-auto flex flex-wrap items-center justify-center gap-3 px-4 py-4 sm:px-6 lg:px-8">
-          <img src={logoCha} alt="CHA logo" className="h-10 w-auto" />
-          <span className="text-sm text-center">© 2026 CHA - Todos los derechos reservados.</span>
+          <img src={logoCha} alt="CHA logo" className="h-8 w-auto" />
+          <span className="text-xs text-center">© 2026 CHA - Todos los derechos reservados.</span>
         </div>
       </footer>
     </div>
