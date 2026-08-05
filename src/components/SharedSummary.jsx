@@ -95,13 +95,21 @@ export const SharedSummary = () => {
     );
   }
 
-  const chartData = summaryCards
+  const rawData = summaryCards
     .filter((card) => card.key !== 'globalUSD')
     .map((card) => ({
       name: card.label,
       value: summary[card.key] ?? 0,
       fill: card.color,
     }));
+
+  const totalValue = rawData.reduce((s, c) => s + (c.value || 0), 0);
+  const chartData = rawData
+    .sort((a, b) => b.value - a.value)
+    .map((d) => {
+      const percent = totalValue ? (d.value / totalValue) * 100 : 0;
+      return { ...d, percent, labelValue: `${currencyFormatter.format(d.value)} (${percent.toFixed(1)}%)` };
+    });
 
   const formatTooltip = (value) => currencyFormatter.format(value);
 
@@ -152,38 +160,37 @@ export const SharedSummary = () => {
             </div>
           </div>
           <div className="flex-1">
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={chartData} margin={{ top: 12, right: 8, left: 0, bottom: 32 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5f4eb" />
+            <ResponsiveContainer width="100%" height={Math.min(400, 80 * chartData.length)}>
+              <BarChart layout="vertical" data={chartData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1faf6" />
                 <XAxis
-                  dataKey="name"
-                  tick={{ fontSize: 11, fill: '#4b5563' }}
-                  interval={0}
-                  angle={-25}
-                  textAnchor="end"
-                  height={64}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <YAxis
+                  type="number"
                   tickFormatter={(value) => currencyFormatter.format(value)}
                   tick={{ fontSize: 11, fill: '#4b5563' }}
                   axisLine={false}
                 />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  width={160}
+                  tick={{ fontSize: 12, fill: '#0f172a' }}
+                  axisLine={false}
+                  tickLine={false}
+                />
                 <Tooltip
                   formatter={formatTooltip}
-                  cursor={{ fill: 'rgba(16, 185, 129, 0.08)' }}
-                  contentStyle={{ borderRadius: 12, borderColor: '#d8f3dc', backgroundColor: '#f8fffc' }}
+                  cursor={{ fill: 'rgba(16, 185, 129, 0.06)' }}
+                  contentStyle={{ borderRadius: 12, borderColor: '#d8f3dc', backgroundColor: '#ffffff' }}
                 />
-                <Bar dataKey="value" radius={[8, 8, 0, 0]} barSize={24}>
+                <Bar dataKey="value" radius={[6, 6, 6, 6]} barSize={18} isAnimationActive={false}>
                   {chartData.map((entry) => (
                     <Cell key={entry.name} fill={entry.fill} />
                   ))}
                   <LabelList
-                    dataKey="value"
-                    position="top"
-                    formatter={(value) => currencyFormatter.format(value)}
-                    style={{ fill: '#134e4a', fontSize: 11, fontWeight: 600 }}
+                    dataKey="labelValue"
+                    position="right"
+                    offset={8}
+                    style={{ fill: '#064e3b', fontSize: 12, fontWeight: 700 }}
                   />
                 </Bar>
               </BarChart>
