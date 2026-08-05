@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSharedSummary } from '../hooks/useSharedSummary';
 import { Loader2, AlertTriangle, Factory, Leaf, Banknote, FlaskConical, Globe2 } from 'lucide-react';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, LabelList, Cell } from 'recharts';
 
 const currencyFormatter = new Intl.NumberFormat('es-AR', {
   style: 'currency',
@@ -22,30 +23,48 @@ const summaryCards = [
     key: 'deudaProveedoresUSD',
     label: 'Deuda Proveedores',
     icon: Factory,
+    color: '#ede9fe',
+    border: '#c4b5fd',
     formatter: (value) => currencyFormatter.format(value),
   },
   {
-    key: 'deudaFrutaUSD',
-    label: 'Deuda Fruta',
+    key: 'deudaFruta25USD',
+    label: 'Deuda Fruta 25',
     icon: Leaf,
+    color: '#dbeafe',
+    border: '#93c5fd',
+    formatter: (value) => currencyFormatter.format(value),
+  },
+  {
+    key: 'deudaFruta26USD',
+    label: 'Deuda Fruta 26',
+    icon: Leaf,
+    color: '#d1fae5',
+    border: '#6ee7b7',
     formatter: (value) => currencyFormatter.format(value),
   },
   {
     key: 'comprasNuevasUSD',
     label: 'Compras nuevas',
     icon: Banknote,
+    color: '#fef3c7',
+    border: '#fde68a',
     formatter: (value) => currencyFormatter.format(value),
   },
   {
     key: 'quimicosTotalUSD',
     label: 'Pedidos Químicos – Pendientes',
     icon: FlaskConical,
+    color: '#fee2e2',
+    border: '#fecaca',
     formatter: (value) => currencyFormatter.format(value),
   },
   {
     key: 'globalUSD',
     label: 'Global',
     icon: Globe2,
+    color: '#e0f2fe',
+    border: '#bae6fd',
     formatter: (value) => currencyFormatter.format(value),
   },
 ];
@@ -76,6 +95,16 @@ export const SharedSummary = () => {
     );
   }
 
+  const chartData = summaryCards
+    .filter((card) => card.key !== 'globalUSD')
+    .map((card) => ({
+      name: card.label,
+      value: summary[card.key] ?? 0,
+      fill: card.color,
+    }));
+
+  const formatTooltip = (value) => currencyFormatter.format(value);
+
   return (
     <div className="mb-8 rounded-3xl border border-green-100 bg-gradient-to-br from-white via-emerald-50 to-white p-6 shadow-sm">
       <div className="mb-4 flex items-center justify-between gap-4">
@@ -86,51 +115,81 @@ export const SharedSummary = () => {
         <p className="text-sm text-gray-500">Se actualiza desde los tres módulos Excel.</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 auto-rows-fr">
-        {summaryCards.map((card) => {
-          const Icon = card.icon;
-          const valueText = card.formatter(summary[card.key] ?? 0);
-          const isDeudaFrutaCard = card.key === 'deudaFrutaUSD';
-          const deudaFruta25Text = currencyFormatter.format(summary.deudaFruta25USD ?? 0);
-          const deudaFruta26Text = currencyFormatter.format(summary.deudaFruta26USD ?? 0);
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[65%_35%]">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:auto-rows-fr">
+          {summaryCards.map((card) => {
+            const Icon = card.icon;
+            const valueText = card.formatter(summary[card.key] ?? 0);
 
-          return (
-            <div
-              key={card.key}
-              className="flex h-full min-h-[132px] min-w-0 flex-col justify-between overflow-hidden rounded-3xl border border-green-100 bg-white p-3 shadow-xs sm:p-4"
-            >
-              <div className="flex min-w-0 items-start justify-between gap-2">
-                <p className="min-w-0 flex-1 text-[9px] uppercase tracking-[0.3em] break-words leading-tight text-gray-500 sm:text-xs xl:text-[10px]">
-                  {card.label}
-                </p>
-                {Icon ? <Icon className="h-5 w-5 shrink-0 text-gray-400 sm:h-6 sm:w-6" /> : null}
-              </div>
-              <div className="mt-3 flex flex-1 flex-col justify-end">
-                {isDeudaFrutaCard ? (
-                  <>
-                    <div className="space-y-1 text-sm text-gray-600">
-                      <p className="text-sm font-medium text-gray-600">Deuda Fruta 25: {deudaFruta25Text}</p>
-                      <p className="text-sm font-medium text-gray-600">Deuda Fruta 26: {deudaFruta26Text}</p>
-                    </div>
-                    <p
-                      className="mt-3 w-full min-w-0 overflow-hidden text-left font-bold leading-snug text-verde-bosque [overflow-wrap:anywhere] break-words hyphens-auto"
-                      style={{ fontSize: getValueFontSize(valueText) }}
-                    >
-                      {valueText}
-                    </p>
-                  </>
-                ) : (
-                  <p
-                    className="w-full min-w-0 overflow-hidden text-left font-bold leading-snug text-verde-bosque [overflow-wrap:anywhere] break-words hyphens-auto"
-                    style={{ fontSize: getValueFontSize(valueText) }}
-                  >
-                    {valueText}
+            return (
+              <div
+                key={card.key}
+                className="flex h-full min-h-[120px] min-w-0 flex-col justify-between overflow-hidden rounded-3xl border p-3 shadow-sm sm:p-4"
+                style={{ backgroundColor: card.color, borderColor: card.border }}
+              >
+                <div className="flex min-w-0 items-start justify-between gap-2">
+                  <p className="min-w-0 flex-1 text-[10px] uppercase tracking-[0.3em] break-words leading-tight text-slate-700 sm:text-[11px] xl:text-[10px]">
+                    {card.label}
                   </p>
-                )}
+                  {Icon ? <Icon className="h-5 w-5 shrink-0 text-slate-500 sm:h-6 sm:w-6" /> : null}
+                </div>
+                <p
+                  className="mt-3 w-full min-w-0 overflow-hidden text-left font-bold leading-snug text-slate-900 [overflow-wrap:anywhere] break-words hyphens-auto"
+                  style={{ fontSize: getValueFontSize(valueText) }}
+                >
+                  {valueText}
+                </p>
               </div>
+            );
+          })}
+        </div>
+
+        <div className="flex min-h-[340px] flex-col overflow-hidden rounded-3xl border border-green-100 bg-white p-4 shadow-xs">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-gray-500">Vista rápida</p>
+              <h3 className="text-lg font-semibold text-verde-bosque">Comparación de indicadores</h3>
             </div>
-          );
-        })}
+          </div>
+          <div className="flex-1">
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={chartData} margin={{ top: 12, right: 8, left: 0, bottom: 32 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5f4eb" />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 11, fill: '#4b5563' }}
+                  interval={0}
+                  angle={-25}
+                  textAnchor="end"
+                  height={64}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  tickFormatter={(value) => currencyFormatter.format(value)}
+                  tick={{ fontSize: 11, fill: '#4b5563' }}
+                  axisLine={false}
+                />
+                <Tooltip
+                  formatter={formatTooltip}
+                  cursor={{ fill: 'rgba(16, 185, 129, 0.08)' }}
+                  contentStyle={{ borderRadius: 12, borderColor: '#d8f3dc', backgroundColor: '#f8fffc' }}
+                />
+                <Bar dataKey="value" radius={[8, 8, 0, 0]} barSize={24}>
+                  {chartData.map((entry) => (
+                    <Cell key={entry.name} fill={entry.fill} />
+                  ))}
+                  <LabelList
+                    dataKey="value"
+                    position="top"
+                    formatter={(value) => currencyFormatter.format(value)}
+                    style={{ fill: '#134e4a', fontSize: 11, fontWeight: 600 }}
+                  />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
     </div>
   );
