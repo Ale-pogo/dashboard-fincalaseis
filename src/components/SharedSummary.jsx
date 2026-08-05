@@ -90,6 +90,10 @@ export const SharedSummary = () => {
         {summaryCards.map((card) => {
           const Icon = card.icon;
           const valueText = card.formatter(summary[card.key] ?? 0);
+          const isDeudaFrutaCard = card.key === 'deudaFrutaUSD';
+          const deudaFruta25Text = currencyFormatter.format(summary.deudaFruta25USD ?? 0);
+          const deudaFruta26Text = currencyFormatter.format(summary.deudaFruta26USD ?? 0);
+
           return (
             <div
               key={card.key}
@@ -101,13 +105,28 @@ export const SharedSummary = () => {
                 </p>
                 {Icon ? <Icon className="h-5 w-5 shrink-0 text-gray-400 sm:h-6 sm:w-6" /> : null}
               </div>
-              <div className="mt-3 flex flex-1 items-end">
-                <p
-                  className="w-full min-w-0 overflow-hidden text-left font-bold leading-snug text-verde-bosque [overflow-wrap:anywhere] break-words hyphens-auto"
-                  style={{ fontSize: getValueFontSize(valueText) }}
-                >
-                  {valueText}
-                </p>
+              <div className="mt-3 flex flex-1 flex-col justify-end">
+                {isDeudaFrutaCard ? (
+                  <>
+                    <div className="space-y-1 text-sm text-gray-600">
+                      <p className="text-sm font-medium text-gray-600">Deuda Fruta 25: {deudaFruta25Text}</p>
+                      <p className="text-sm font-medium text-gray-600">Deuda Fruta 26: {deudaFruta26Text}</p>
+                    </div>
+                    <p
+                      className="mt-3 w-full min-w-0 overflow-hidden text-left font-bold leading-snug text-verde-bosque [overflow-wrap:anywhere] break-words hyphens-auto"
+                      style={{ fontSize: getValueFontSize(valueText) }}
+                    >
+                      {valueText}
+                    </p>
+                  </>
+                ) : (
+                  <p
+                    className="w-full min-w-0 overflow-hidden text-left font-bold leading-snug text-verde-bosque [overflow-wrap:anywhere] break-words hyphens-auto"
+                    style={{ fontSize: getValueFontSize(valueText) }}
+                  >
+                    {valueText}
+                  </p>
+                )}
               </div>
             </div>
           );

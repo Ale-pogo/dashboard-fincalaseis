@@ -78,6 +78,9 @@ const matchesCurrentWeek = (value, currentWeek) => {
 const parseGastosSheetSummary = (rows) => {
   const totals = {
     deudaProveedoresUSD: 0,
+    deudaFruta25USD: 0,
+    deudaFruta26USD: 0,
+    deudaFrutaPlainUSD: 0,
     deudaFrutaUSD: 0,
     comprasNuevasUSD: 0,
   };
@@ -109,7 +112,13 @@ const parseGastosSheetSummary = (rows) => {
 
     const importeValue = parseCurrencyValue(row[importeIndex]);
     if (rubroRaw.includes('deuda fruta')) {
-      totals.deudaFrutaUSD += importeValue;
+      if (/\b25\b/.test(rubroRaw)) {
+        totals.deudaFruta25USD += importeValue;
+      } else if (/\b26\b/.test(rubroRaw)) {
+        totals.deudaFruta26USD += importeValue;
+      } else {
+        totals.deudaFrutaPlainUSD += importeValue;
+      }
     } else if (rubroRaw === 'deuda' || rubroRaw.includes('deuda proveedor') || rubroRaw.includes('deuda proveedores')) {
       totals.deudaProveedoresUSD += importeValue;
     } else if (rubroRaw.includes('nuevo') || rubroRaw.includes('compras nueva')) {
@@ -117,6 +126,7 @@ const parseGastosSheetSummary = (rows) => {
     }
   }
 
+  totals.deudaFrutaUSD = totals.deudaFruta25USD + totals.deudaFruta26USD + totals.deudaFrutaPlainUSD;
   return totals;
 };
 
@@ -151,6 +161,9 @@ const parseSummarySheetTotal = (rows, totalColumnLabel) => {
 const parsePagosSemanalSummary = (rows) => {
   const totals = {
     deudaProveedoresUSD: 0,
+    deudaFruta25USD: 0,
+    deudaFruta26USD: 0,
+    deudaFrutaPlainUSD: 0,
     deudaFrutaUSD: 0,
     comprasNuevasUSD: 0,
   };
@@ -171,8 +184,14 @@ const parsePagosSemanalSummary = (rows) => {
     if (rubroCell) currentGroup = rubroCell;
     if (!currentGroup) continue;
 
-    if (currentGroup === 'deuda fruta') {
-      totals.deudaFrutaUSD += totalValue;
+    if (currentGroup.includes('deuda fruta')) {
+      if (/\b25\b/.test(currentGroup)) {
+        totals.deudaFruta25USD += totalValue;
+      } else if (/\b26\b/.test(currentGroup)) {
+        totals.deudaFruta26USD += totalValue;
+      } else {
+        totals.deudaFrutaPlainUSD += totalValue;
+      }
     }
 
     if (currentGroup === 'nuevo') {
@@ -184,6 +203,7 @@ const parsePagosSemanalSummary = (rows) => {
     }
   }
 
+  totals.deudaFrutaUSD = totals.deudaFruta25USD + totals.deudaFruta26USD + totals.deudaFrutaPlainUSD;
   return totals;
 };
 
@@ -191,6 +211,8 @@ export const useGastosReader = (filePath) => {
   const [data, setData] = useState([]);
   const [summary, setSummary] = useState({
     deudaProveedoresUSD: 0,
+    deudaFruta25USD: 0,
+    deudaFruta26USD: 0,
     deudaFrutaUSD: 0,
     comprasNuevasUSD: 0,
   });
@@ -220,7 +242,13 @@ export const useGastosReader = (filePath) => {
 
         if (jsonData.length <= 7) {
           setData([]);
-          setSummary({ deudaProveedoresUSD: 0, deudaFrutaUSD: 0, comprasNuevasUSD: 0 });
+          setSummary({
+            deudaProveedoresUSD: 0,
+            deudaFruta25USD: 0,
+            deudaFruta26USD: 0,
+            deudaFrutaUSD: 0,
+            comprasNuevasUSD: 0,
+          });
           return;
         }
 

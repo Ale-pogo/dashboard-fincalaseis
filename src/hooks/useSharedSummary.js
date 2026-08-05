@@ -11,7 +11,9 @@ export const useSharedSummary = () => {
   const summary = useMemo(() => {
     const comprasCount = compras.data?.length ?? 0;
     const deudaProveedoresUSD = gastos.summary?.deudaProveedoresUSD ?? 0;
-    const deudaFrutaUSD = gastos.summary?.deudaFrutaUSD ?? 0;
+    const deudaFruta25USD = gastos.summary?.deudaFruta25USD ?? 0;
+    const deudaFruta26USD = gastos.summary?.deudaFruta26USD ?? 0;
+    const deudaFrutaUSD = gastos.summary?.deudaFrutaUSD ?? deudaFruta25USD + deudaFruta26USD;
     const comprasNuevasUSD = gastos.summary?.comprasNuevasUSD ?? 0;
     const quimicosTotalUSD = (quimicos.summaryTable || [])
       .filter((row) => row.isTotal)
@@ -21,6 +23,8 @@ export const useSharedSummary = () => {
     return {
       comprasCount,
       deudaProveedoresUSD,
+      deudaFruta25USD,
+      deudaFruta26USD,
       deudaFrutaUSD,
       comprasNuevasUSD,
       quimicosTotalUSD,
