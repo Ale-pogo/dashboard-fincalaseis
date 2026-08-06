@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSharedSummary } from '../hooks/useSharedSummary';
 import { Loader2, AlertTriangle, Factory, Leaf, Banknote, FlaskConical, Globe2 } from 'lucide-react';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, LabelList, Cell } from 'recharts';
+import { ResponsiveContainer, Tooltip, Cell, PieChart, Pie } from 'recharts';
 
 const currencyFormatter = new Intl.NumberFormat('es-AR', {
   style: 'currency',
@@ -111,6 +111,12 @@ export const SharedSummary = () => {
       return { ...d, percent, labelValue: `${currencyFormatter.format(d.value)} (${percent.toFixed(1)}%)` };
     });
 
+  const donutData = chartData.map((item) => ({
+    name: item.name,
+    value: item.percent,
+    fill: item.fill,
+  }));
+
   const formatTooltip = (value) => currencyFormatter.format(value);
 
   return (
@@ -160,41 +166,47 @@ export const SharedSummary = () => {
             </div>
           </div>
           <div className="flex-1">
-            <ResponsiveContainer width="100%" height={Math.min(400, 80 * chartData.length)}>
-              <BarChart layout="vertical" data={chartData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1faf6" />
-                <XAxis
-                  type="number"
-                  tickFormatter={(value) => currencyFormatter.format(value)}
-                  tick={{ fontSize: 11, fill: '#4b5563' }}
-                  axisLine={false}
-                />
-                <YAxis
-                  type="category"
-                  dataKey="name"
-                  width={160}
-                  tick={{ fontSize: 12, fill: '#0f172a' }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <Tooltip
-                  formatter={formatTooltip}
-                  cursor={{ fill: 'rgba(16, 185, 129, 0.06)' }}
-                  contentStyle={{ borderRadius: 12, borderColor: '#d8f3dc', backgroundColor: '#ffffff' }}
-                />
-                <Bar dataKey="value" radius={[6, 6, 6, 6]} barSize={18} isAnimationActive={false}>
-                  {chartData.map((entry) => (
-                    <Cell key={entry.name} fill={entry.fill} />
-                  ))}
-                  <LabelList
-                    dataKey="labelValue"
-                    position="right"
-                    offset={8}
-                    style={{ fill: '#064e3b', fontSize: 12, fontWeight: 700 }}
+            <div className="rounded-3xl border border-green-100 bg-slate-50 p-5 shadow-xs">
+              <div className="mb-4 text-center">
+                <p className="text-xs uppercase tracking-[0.3em] text-gray-500">Distribución</p>
+                <p className="text-base font-semibold text-slate-900">Porción del total</p>
+              </div>
+              <ResponsiveContainer width="100%" height={320}>
+                <PieChart>
+                  <Pie
+                    data={donutData}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={72}
+                    outerRadius={110}
+                    paddingAngle={4}
+                    labelLine={false}
+                    label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                  >
+                    {donutData.map((entry) => (
+                      <Cell key={entry.name} fill={entry.fill} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={formatTooltip}
+                    cursor={{ fill: 'rgba(16, 185, 129, 0.06)' }}
+                    contentStyle={{ borderRadius: 12, borderColor: '#d8f3dc', backgroundColor: '#ffffff' }}
                   />
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+                </PieChart>
+              </ResponsiveContainer>
+
+              <div className="mt-5 grid gap-3 text-sm text-slate-700 sm:grid-cols-2">
+                {chartData.map((entry) => (
+                  <div key={entry.name} className="flex items-center gap-3 rounded-3xl border border-slate-200 bg-white p-3 shadow-sm">
+                    <span className="inline-flex h-3 w-3 rounded-full" style={{ backgroundColor: entry.fill }} />
+                    <div className="min-w-0">
+                      <p className="truncate font-medium text-slate-900">{entry.name}</p>
+                      <p className="truncate text-xs text-slate-500">{entry.percent.toFixed(1)}%</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
