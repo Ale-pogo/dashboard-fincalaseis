@@ -124,8 +124,8 @@ export const SharedSummary = () => {
 
   return (
     <div className="mb-8 rounded-3xl border border-green-100 bg-gradient-to-br from-white via-emerald-50 to-white p-6 shadow-sm">
-      <div className="mb-4 flex items-center justify-between gap-4">
-        <div>
+      <div className="mb-4 flex items-baseline justify-between gap-4">
+        <div className="flex items-baseline gap-3">
           <p className="text-xs uppercase tracking-[0.3em] text-gray-500">Resumen global</p>
           <h2 className="text-xl font-bold text-verde-bosque">Indicadores claves</h2>
         </div>
@@ -161,50 +161,44 @@ export const SharedSummary = () => {
           })}
         </div>
 
-        <div className="flex min-h-[340px] flex-col overflow-hidden rounded-3xl border border-green-100 bg-white p-4 shadow-xs">
-          <div className="mb-3">
-            <p className="text-xs uppercase tracking-[0.3em] text-gray-500">Vista rápida</p>
-            <h3 className="text-lg font-semibold text-verde-bosque">Comparación de indicadores</h3>
-          </div>
-          <div className="flex-1 overflow-hidden rounded-3xl bg-slate-50 shadow-xs" style={{ border: `1px solid ${dominantBorderColor}` }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={donutData}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius="45%"
-                  outerRadius="70%"
-                  paddingAngle={4}
-                  labelLine={false}
-                  label={({ index, percent, x, y }) => {
-                    const entry = donutData[index];
-                    return (
-                      <text
-                        x={x}
-                        y={y}
-                        textAnchor="middle"
-                        dominantBaseline="central"
-                        fill={entry?.border ?? '#000'}
-                        fontSize="0.85rem"
-                      >
-                        {`${(percent * 100).toFixed(0)}%`}
-                      </text>
-                    );
-                  }}
-                >
-                  {donutData.map((entry) => (
-                    <Cell key={entry.name} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={formatTooltip}
-                  cursor={{ fill: 'rgba(16, 185, 129, 0.06)' }}
-                  contentStyle={{ borderRadius: 12, borderColor: '#d8f3dc', backgroundColor: '#ffffff' }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
+        <div className="min-h-[340px] overflow-hidden rounded-3xl border border-green-100 bg-white shadow-xs" style={{ borderColor: dominantBorderColor }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={donutData}
+                dataKey="value"
+                nameKey="name"
+                innerRadius="45%"
+                outerRadius="70%"
+                paddingAngle={4}
+                labelLine={false}
+                label={({ index, percent, x, y }) => {
+                  const entry = donutData[index];
+                  return (
+                    <text
+                      x={x}
+                      y={y}
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                      fill={entry?.border ?? '#000'}
+                      fontSize="0.85rem"
+                    >
+                      {`${(percent * 100).toFixed(0)}%`}
+                    </text>
+                  );
+                }}
+              >
+                {donutData.map((entry) => (
+                  <Cell key={entry.name} fill={entry.fill} />
+                ))}
+              </Pie>
+              <Tooltip
+                formatter={formatTooltip}
+                cursor={{ fill: 'rgba(16, 185, 129, 0.06)' }}
+                contentStyle={{ borderRadius: 12, borderColor: '#d8f3dc', backgroundColor: '#ffffff' }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>
