@@ -129,7 +129,6 @@ export const SharedSummary = () => {
           <p className="text-xs uppercase tracking-[0.3em] text-gray-500">Resumen global</p>
           <h2 className="text-xl font-bold text-verde-bosque">Indicadores claves</h2>
         </div>
-        <p className="text-sm text-gray-500">Se actualiza desde los tres módulos Excel.</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[65%_35%]">

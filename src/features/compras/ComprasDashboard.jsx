@@ -100,8 +100,10 @@ export const ComprasDashboard = () => {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-verde-bosque">Módulo 1: Requerimientos de Compras</h1>
-        <p className="text-sm text-gray-500">2025 - 2026</p>
+        <h1 className="text-2xl font-bold text-verde-bosque">
+          Módulo 1: Requerimientos de Compras
+          <span className="ml-2 text-base font-semibold text-gray-500">2025 – 2026</span>
+        </h1>
       </div>
 
       <div className="space-y-6">

@@ -136,7 +136,6 @@ export const PedidosQuimicosDashboard = () => {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-verde-bosque">Módulo 3: Pedidos Químicos</h1>
-        <p className="text-sm text-gray-500">Análisis de cumplimiento desde la pestaña Datos del archivo pedido quimicos campaña 2026 valorizado.xlsx.</p>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,360px)_minmax(0,1fr)] gap-6 items-start">
