@@ -113,40 +113,47 @@ export const ComprasDashboard = () => {
           </div>
 
           <div className="bg-white p-4 rounded-xl shadow-xs border border-green-100 h-full">
-            <GraficoTorta dataFiltered={dataGeneralPorEstado} title="Total General por Estado" chartType="bar" />
-          </div>
-        </div>
+            <h3 className="text-sm font-bold text-verde-bosque uppercase tracking-wide mb-3">
+              Distribución Porcentual (Segmento Seleccionado)
+            </h3>
+            {/* Leyenda compartida de estados — fuera de las tarjetas para aprovechar espacio del gráfico */}
+            <div className="flex flex-wrap gap-3 mb-4">
+              {estadosUnicos.map((estado, index) => (
+                <div key={estado} className="flex items-center gap-2">
+                  <span
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: COLORES_VERDES[index % COLORES_VERDES.length] }}
+                  />
+                  <span className="text-xs text-gray-600">{estado}</span>
+                </div>
+              ))}
+            </div>
 
-        <div className="bg-white p-4 rounded-xl shadow-xs border border-green-100">
-          <h3 className="text-sm font-bold text-verde-bosque uppercase tracking-wide mb-3">
-            Distribución Porcentual (Segmento Seleccionado)
-          </h3>
-          {/* Leyenda compartida de estados — fuera de las tarjetas para aprovechar espacio del gráfico */}
-          <div className="flex flex-wrap gap-3 mb-4">
-            {estadosUnicos.map((estado, index) => (
-              <div key={estado} className="flex items-center gap-2">
-                <span
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: COLORES_VERDES[index % COLORES_VERDES.length] }}
-                />
-                <span className="text-xs text-gray-600">{estado}</span>
-              </div>
-            ))}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-            {segmentos.map(segmento => {
-              const datosSegmento = dataFiltered.filter(item => item.solicita === segmento);
-              return (
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-4">
+              <div className="h-full">
                 <GraficoTorta
-                  key={segmento}
-                  dataFiltered={datosSegmento}
-                  title={segmento}
-                  groupBy="estado"
-                  emptyMessage={`Sin datos para ${segmento}`}
+                  dataFiltered={dataGeneralPorEstado}
+                  title="Total General por Estado"
                   showLegend={false}
                 />
-              );
-            })}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {segmentos.map(segmento => {
+                  const datosSegmento = dataFiltered.filter(item => item.solicita === segmento);
+                  return (
+                    <GraficoTorta
+                      key={segmento}
+                      dataFiltered={datosSegmento}
+                      title={segmento}
+                      groupBy="estado"
+                      emptyMessage={`Sin datos para ${segmento}`}
+                      showLegend={false}
+                    />
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
 

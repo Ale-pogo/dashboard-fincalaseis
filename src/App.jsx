@@ -9,7 +9,7 @@ import logoCha from './assets/logo_cha.svg';
 import logoLaSeis from './assets/logo La Seis.svg';
 
 function App() {
-  const [activeModule, setActiveModule] = useState('compras');
+  const [activeModule, setActiveModule] = useState('gastos');
 
   return (
     <div className="min-h-screen bg-fondo-sitio font-sans text-current transition-colors duration-300 flex flex-col">
@@ -26,15 +26,6 @@ function App() {
           <nav className="relative z-10 flex-1 p-4 sm:p-5 space-y-2 overflow-y-auto">
             <button
               type="button"
-              onClick={() => setActiveModule('compras')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium shadow-xs transition-all text-left ${activeModule === 'compras' ? 'bg-verde-esmeralda text-white' : 'text-green-300 hover:bg-green-800/50'}`}
-            >
-              <ShoppingCart className="w-5 h-5 text-current shrink-0" />
-              <span className="text-sm sm:text-base">Requerimiento Compras</span>
-            </button>
-
-            <button
-              type="button"
               onClick={() => setActiveModule('gastos')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium shadow-xs transition-all text-left ${activeModule === 'gastos' ? 'bg-verde-esmeralda text-white' : 'text-green-300 hover:bg-green-800/50'}`}
             >
@@ -48,7 +39,16 @@ function App() {
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium shadow-xs transition-all text-left ${activeModule === 'quimicos' ? 'bg-verde-esmeralda text-white' : 'text-green-300 hover:bg-green-800/50'}`}
             >
               <FlaskConical className="w-5 h-5 text-current shrink-0" />
-              <span className="text-sm sm:text-base">Pedidos Químicos</span>
+              <span className="text-sm sm:text-base">Pedidos de Químicos</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveModule('compras')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium shadow-xs transition-all text-left ${activeModule === 'compras' ? 'bg-verde-esmeralda text-white' : 'text-green-300 hover:bg-green-800/50'}`}
+            >
+              <ShoppingCart className="w-5 h-5 text-current shrink-0" />
+              <span className="text-sm sm:text-base">Requerimiento Compras</span>
             </button>
           </nav>
         </aside>
