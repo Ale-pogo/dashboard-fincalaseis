@@ -35,5 +35,11 @@ export const useSharedSummary = () => {
   const loading = compras.loading || gastos.loading || quimicos.loading;
   const errors = [compras.error, gastos.error, quimicos.error].filter(Boolean);
 
-  return { summary, loading, errors };
+  return {
+    summary,
+    loading,
+    errors,
+    gastosData: gastos.data,
+    quimicosData: quimicos.data,
+  };
 };

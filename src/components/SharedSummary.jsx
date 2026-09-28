@@ -1,6 +1,6 @@
-import React from 'react';
+import { useMemo, useState } from 'react';
 import { useSharedSummary } from '../hooks/useSharedSummary';
-import { Loader2, AlertTriangle, Factory, Leaf, Banknote, FlaskConical, Globe2 } from 'lucide-react';
+import { Loader2, AlertTriangle, Factory, Leaf, Banknote, FlaskConical, Globe2, ChevronDown } from 'lucide-react';
 import { ResponsiveContainer, Tooltip, Cell, PieChart, Pie } from 'recharts';
 
 const currencyFormatter = new Intl.NumberFormat('es-AR', {
@@ -69,8 +69,94 @@ const summaryCards = [
   },
 ];
 
+const getGastoCategory = (rubro) => {
+  const normalized = String(rubro || '').trim().toLowerCase();
+
+  if (normalized.includes('deuda fruta')) {
+    if (/\b25\b/.test(normalized)) return 'deudaFruta25USD';
+    if (/\b26\b/.test(normalized)) return 'deudaFruta26USD';
+    return 'deudaFrutaUSD';
+  }
+  if (normalized === 'deuda' || normalized.includes('deuda proveedor')) return 'deudaProveedoresUSD';
+  if (normalized.includes('nuevo') || normalized.includes('compras nueva')) return 'comprasNuevasUSD';
+  return null;
+};
+
+const ExpenseDetailsTable = ({ rows }) => (
+  <div className="overflow-x-auto max-h-96">
+    <table className="w-full border-collapse text-left text-sm">
+      <thead className="sticky top-0 bg-green-50 text-verde-bosque">
+        <tr className="border-b border-green-100">
+          <th className="p-3">Proveedor</th>
+          <th className="p-3">Descripción</th>
+          <th className="p-3 text-right">Importe U$D</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-green-50">
+        {rows.length === 0 ? (
+          <tr><td colSpan="3" className="p-4 text-center text-gray-500">No hay gastos para este indicador.</td></tr>
+        ) : rows.map((item) => (
+          <tr key={item.id} className="hover:bg-green-50/50">
+            <td className="p-3 text-gray-700">{item.proveedor}</td>
+            <td className="p-3 text-gray-700">{item.descripcion}</td>
+            <td className="p-3 text-right font-medium text-gray-800">{currencyFormatter.format(item.importe)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
+
+const ChemicalDetailsTable = ({ rows }) => (
+  <div className="overflow-x-auto max-h-96">
+    <table className="w-full border-collapse text-left text-sm">
+      <thead className="sticky top-0 bg-green-50 text-verde-bosque">
+        <tr className="border-b border-green-100">
+          <th className="p-3">Sector</th>
+          <th className="p-3 text-right">Cantidad</th>
+          <th className="p-3">U/M</th>
+          <th className="p-3">Artículo</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-green-50">
+        {rows.length === 0 ? (
+          <tr><td colSpan="4" className="p-4 text-center text-gray-500">No hay pedidos pendientes.</td></tr>
+        ) : rows.map((item) => (
+          <tr key={item.id} className="hover:bg-green-50/50">
+            <td className="p-3 text-gray-700">{item.sector}</td>
+            <td className="p-3 text-right text-gray-700">{item.cantidad}</td>
+            <td className="p-3 text-gray-700">{item.um}</td>
+            <td className="p-3 text-gray-700">{item.articulo}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
+
 export const SharedSummary = () => {
-  const { summary, loading, errors } = useSharedSummary();
+  const { summary, loading, errors, gastosData, quimicosData } = useSharedSummary();
+  const [selectedCardKey, setSelectedCardKey] = useState(null);
+  const selectedCard = summaryCards.find((card) => card.key === selectedCardKey);
+  const details = useMemo(() => {
+    if (!selectedCardKey) return { gastos: [], quimicos: [] };
+
+    const gastos = selectedCardKey === 'quimicosTotalUSD'
+      ? []
+      : gastosData.filter((item) => {
+        if (!item.esSemanaActual) return false;
+        const category = getGastoCategory(item.rubro);
+        if (selectedCardKey === 'globalUSD') {
+          return ['deudaProveedoresUSD', 'deudaFrutaUSD', 'comprasNuevasUSD'].includes(category);
+        }
+        return category === selectedCardKey;
+      });
+    const quimicos = ['quimicosTotalUSD', 'globalUSD'].includes(selectedCardKey)
+      ? quimicosData.filter((item) => String(item.estado || '').trim().toLowerCase() !== 'cumplido')
+      : [];
+
+    return { gastos, quimicos };
+  }, [selectedCardKey, gastosData, quimicosData]);
 
   if (loading) {
     return (
@@ -136,18 +222,27 @@ export const SharedSummary = () => {
           {summaryCards.map((card) => {
             const Icon = card.icon;
             const valueText = card.formatter(summary[card.key] ?? 0);
+            const isSelected = selectedCardKey === card.key;
 
             return (
-              <div
+              <button
                 key={card.key}
-                className="flex h-full min-h-[120px] min-w-0 flex-col justify-between overflow-hidden rounded-3xl border p-3 shadow-sm sm:p-4"
+                type="button"
+                aria-expanded={isSelected}
+                aria-controls="summary-card-details"
+                aria-label={`${isSelected ? 'Ocultar' : 'Ver'} detalle de ${card.label}`}
+                onClick={() => setSelectedCardKey(isSelected ? null : card.key)}
+                className={`flex h-full min-h-[120px] min-w-0 cursor-pointer flex-col justify-between overflow-hidden rounded-3xl border p-3 text-left shadow-sm transition hover:brightness-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-verde-bosque sm:p-4 ${isSelected ? 'ring-2 ring-verde-bosque ring-offset-2' : ''}`}
                 style={{ backgroundColor: card.color, borderColor: card.border }}
               >
                 <div className="flex min-w-0 items-start justify-between gap-2">
                   <p className="min-w-0 flex-1 text-[10px] uppercase tracking-[0.3em] break-words leading-tight text-slate-700 sm:text-[11px] xl:text-[10px]">
                     {card.label}
                   </p>
-                  {Icon ? <Icon className="h-5 w-5 shrink-0 text-slate-500 sm:h-6 sm:w-6" /> : null}
+                  <span className="flex shrink-0 items-center gap-1 text-slate-500">
+                    {Icon ? <Icon className="h-5 w-5 sm:h-6 sm:w-6" /> : null}
+                    <ChevronDown className={`h-4 w-4 transition-transform ${isSelected ? 'rotate-180' : ''}`} />
+                  </span>
                 </div>
                 <p
                   className="mt-3 w-full min-w-0 overflow-hidden text-left font-bold leading-snug text-slate-900 [overflow-wrap:anywhere] break-words hyphens-auto"
@@ -155,7 +250,7 @@ export const SharedSummary = () => {
                 >
                   {valueText}
                 </p>
-              </div>
+              </button>
             );
           })}
         </div>
@@ -200,6 +295,24 @@ export const SharedSummary = () => {
           </ResponsiveContainer>
         </div>
       </div>
+
+      {selectedCard && (
+        <section id="summary-card-details" aria-live="polite" className="mt-6 border-t border-green-100 pt-5">
+          <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-verde-bosque">
+            Detalle: {selectedCard.label}
+          </h3>
+          {details.gastos.length > 0 || selectedCardKey !== 'quimicosTotalUSD' ? (
+            <div className={selectedCardKey === 'globalUSD' ? 'mb-6' : ''}>
+              {selectedCardKey === 'globalUSD' && <h4 className="mb-2 text-sm font-semibold text-slate-700">Gastos semanales</h4>}
+              <ExpenseDetailsTable rows={details.gastos} />
+            </div>
+          ) : null}
+          {selectedCardKey === 'globalUSD' && <h4 className="mb-2 text-sm font-semibold text-slate-700">Pedidos químicos pendientes</h4>}
+          {selectedCardKey === 'quimicosTotalUSD' || selectedCardKey === 'globalUSD' ? (
+            <ChemicalDetailsTable rows={details.quimicos} />
+          ) : null}
+        </section>
+      )}
     </div>
   );
 };

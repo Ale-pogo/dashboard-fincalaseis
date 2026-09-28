@@ -252,7 +252,13 @@ export const useGastosReader = (filePath) => {
           return;
         }
 
-        const rows = jsonData.slice(8);
+        const headerRowIndex = findHeaderRow(jsonData, ['rubro', 'importe', 'semana']);
+        if (headerRowIndex === -1) {
+          throw new Error('No se encontró el encabezado esperado en la hoja Semanal.');
+        }
+
+        const currentWeek = getCurrentWeekStrings();
+        const rows = jsonData.slice(headerRowIndex + 1);
         const formattedData = rows
           .filter(row => row.some(cell => cell !== undefined && cell !== null && String(cell).trim() !== ''))
           .map((row, index) => {
@@ -263,8 +269,10 @@ export const useGastosReader = (filePath) => {
 
             return {
               id: index,
-              semana: String(row[0] || '').trim() || 'Sin semana',
+              semana: String(row[0] || row[13] || '').trim() || 'Sin semana',
+              esSemanaActual: matchesCurrentWeek(row[0] || row[13], currentWeek),
               proveedor: String(row[1] || '').trim() || 'Sin proveedor',
+              descripcion: String(row[2] || '').trim() || 'Sin descripción',
               rubro: String(row[4] || '').trim() || 'Sin rubro',
               via: String(row[5] || '').trim() || 'Sin via',
               formaPago: String(row[6] || '').trim() || 'Sin forma de pago',
