@@ -209,16 +209,16 @@ export const SharedSummary = () => {
   const formatTooltip = (value) => currencyFormatter.format(value);
 
   return (
-    <div className="mb-8 rounded-3xl border border-green-100 bg-gradient-to-br from-white via-emerald-50 to-white p-6 shadow-sm">
-      <div className="mb-4 flex items-baseline justify-between gap-4">
+    <div className="mb-6 rounded-2xl border border-green-100 bg-gradient-to-br from-white via-emerald-50 to-white px-4 py-3 shadow-sm sm:px-5">
+      <div className="mb-2 flex items-baseline justify-between gap-4">
         <div className="flex items-baseline gap-3">
           <p className="text-xs uppercase tracking-[0.3em] text-gray-500">Resumen global</p>
           <h2 className="text-xl font-bold text-verde-bosque">Indicadores claves</h2>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[65%_35%]">
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:auto-rows-fr">
+      <div className="grid grid-cols-1 gap-3 xl:grid-cols-[65%_35%]">
+        <div className="grid grid-cols-1 gap-3 xl:grid-cols-3 xl:auto-rows-fr">
           {summaryCards.map((card) => {
             const Icon = card.icon;
             const valueText = card.formatter(summary[card.key] ?? 0);
@@ -232,20 +232,21 @@ export const SharedSummary = () => {
                 aria-controls="summary-card-details"
                 aria-label={`${isSelected ? 'Ocultar' : 'Ver'} detalle de ${card.label}`}
                 onClick={() => setSelectedCardKey(isSelected ? null : card.key)}
-                className={`flex h-full min-h-[120px] min-w-0 cursor-pointer flex-col justify-between overflow-hidden rounded-3xl border p-3 text-left shadow-sm transition hover:brightness-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-verde-bosque sm:p-4 ${isSelected ? 'ring-2 ring-verde-bosque ring-offset-2' : ''}`}
-                style={{ backgroundColor: card.color, borderColor: card.border }}
+                className={`summary-card relative isolate flex h-full min-h-[120px] min-w-0 cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border p-3 text-left shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-verde-bosque sm:p-4 ${isSelected ? 'summary-card-selected ring-2 ring-verde-bosque ring-offset-2' : ''}`}
+                style={{ '--summary-bg': card.color, '--summary-accent': card.border, backgroundColor: card.color, borderColor: card.border }}
               >
-                <div className="flex min-w-0 items-start justify-between gap-2">
+                <span className="summary-card-overlay" aria-hidden="true" />
+                <div className="relative z-10 flex min-w-0 items-start justify-between gap-2">
                   <p className="min-w-0 flex-1 text-[10px] uppercase tracking-[0.3em] break-words leading-tight text-slate-700 sm:text-[11px] xl:text-[10px]">
                     {card.label}
                   </p>
-                  <span className="flex shrink-0 items-center gap-1 text-slate-500">
-                    {Icon ? <Icon className="h-5 w-5 sm:h-6 sm:w-6" /> : null}
+                  <span className="summary-card-icon flex shrink-0 items-center justify-center gap-1 text-slate-600">
+                    {Icon ? <Icon className="h-4 w-4 sm:h-5 sm:w-5" /> : null}
                     <ChevronDown className={`h-4 w-4 transition-transform ${isSelected ? 'rotate-180' : ''}`} />
                   </span>
                 </div>
                 <p
-                  className="mt-3 w-full min-w-0 overflow-hidden text-left font-bold leading-snug text-slate-900 [overflow-wrap:anywhere] break-words hyphens-auto"
+                  className="relative z-10 mt-3 w-full min-w-0 overflow-hidden text-left font-bold leading-snug text-slate-900 [overflow-wrap:anywhere] break-words hyphens-auto"
                   style={{ fontSize: getValueFontSize(valueText) }}
                 >
                   {valueText}
