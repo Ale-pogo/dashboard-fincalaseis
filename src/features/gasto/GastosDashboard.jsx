@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useGastosReader } from '../../hooks/useGastosReader';
 import { GraficoTorta } from '../compras/GraficoTorta';
 import { RefreshCw } from 'lucide-react';
@@ -36,6 +36,7 @@ export const GastosDashboard = () => {
   const { data, loading, error } = useGastosReader('/data/Gastos semanaless.xlsx');
   const [selectedSemana, setSelectedSemana] = useState('Todos');
   const [selectedView, setSelectedView] = useState('deudas');
+  const [selectedProveedor, setSelectedProveedor] = useState('Todos');
   const [selectedChartFilter, setSelectedChartFilter] = useState(null);
   const [tableFilters, setTableFilters] = useState({
     proveedor: '',
@@ -50,6 +51,23 @@ export const GastosDashboard = () => {
     return lista.sort(ordenarSemanas);
   }, [data]);
 
+  const proveedores = useMemo(() => {
+    const porSemana = selectedSemana === 'Todos'
+      ? data
+      : data.filter(item => item.semana === selectedSemana);
+
+    const proveedoresDisponibles = porSemana
+      .filter((item) => {
+        const estado = String(item.estado || '').trim().toLowerCase();
+        if (selectedView === 'pagos') return estado === 'pagado';
+        return estado !== '' && estado !== 'pagado';
+      })
+      .map(item => String(item.proveedor || '').trim())
+      .filter(Boolean);
+
+    return [...new Set(proveedoresDisponibles)].sort((a, b) => a.localeCompare(b, 'es'));
+  }, [data, selectedSemana, selectedView]);
+
   const filteredData = useMemo(() => {
     const porSemana = selectedSemana === 'Todos'
       ? data
@@ -57,10 +75,15 @@ export const GastosDashboard = () => {
 
     return porSemana.filter((item) => {
       const estado = String(item.estado || '').trim().toLowerCase();
-      if (selectedView === 'pagos') return estado === 'pagado';
-      return estado !== '' && estado !== 'pagado';
+      const coincideVista = selectedView === 'pagos'
+        ? estado === 'pagado'
+        : estado !== '' && estado !== 'pagado';
+      const coincideProveedor = selectedProveedor === 'Todos'
+        || String(item.proveedor || '').trim() === selectedProveedor;
+
+      return coincideVista && coincideProveedor;
     });
-  }, [data, selectedSemana, selectedView]);
+  }, [data, selectedSemana, selectedView, selectedProveedor]);
 
   const totalGasto = useMemo(
     () => filteredData.reduce((sum, item) => sum + item.importe, 0),
@@ -155,7 +178,10 @@ export const GastosDashboard = () => {
           <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Semana</label>
           <select
             value={selectedSemana}
-            onChange={(e) => setSelectedSemana(e.target.value)}
+            onChange={(e) => {
+              setSelectedSemana(e.target.value);
+              setSelectedProveedor('Todos');
+            }}
             className="w-full p-3 bg-fondo-sitio border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-verde-menta text-gray-700"
           >
             <option value="Todos">Todas las semanas</option>
@@ -167,19 +193,37 @@ export const GastosDashboard = () => {
           <div className="mt-4 flex gap-2">
             <button
               type="button"
-              onClick={() => setSelectedView('deudas')}
+              onClick={() => {
+                setSelectedView('deudas');
+                setSelectedProveedor('Todos');
+              }}
               className={`flex-1 rounded-lg border px-3 py-2 text-sm font-semibold transition ${selectedView === 'deudas' ? 'border-verde-bosque bg-verde-bosque text-white' : 'border-green-200 bg-white text-verde-bosque hover:bg-green-50'}`}
             >
               Deudas
             </button>
             <button
               type="button"
-              onClick={() => setSelectedView('pagos')}
+              onClick={() => {
+                setSelectedView('pagos');
+                setSelectedProveedor('Todos');
+              }}
               className={`flex-1 rounded-lg border px-3 py-2 text-sm font-semibold transition ${selectedView === 'pagos' ? 'border-verde-bosque bg-verde-bosque text-white' : 'border-green-200 bg-white text-verde-bosque hover:bg-green-50'}`}
             >
               Pagos
             </button>
           </div>
+
+          <label className="block text-xs font-bold uppercase text-gray-500 mt-4 mb-2">Proveedores</label>
+          <select
+            value={selectedProveedor}
+            onChange={(e) => setSelectedProveedor(e.target.value)}
+            className="w-full p-3 bg-fondo-sitio border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-verde-menta text-gray-700"
+          >
+            <option value="Todos">Todos los proveedores</option>
+            {proveedores.map((proveedor) => (
+              <option key={proveedor} value={proveedor}>{proveedor}</option>
+            ))}
+          </select>
 
           <div className="mt-6 space-y-4">
             <div className="rounded-2xl border border-green-100 bg-emerald-50 p-4">
