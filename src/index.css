@@ -201,18 +201,9 @@
     url('./assets/oliva1.svg'),
     url('./assets/oliva2.svg'),
     url('./assets/oliva3.svg');
-  background-repeat:
-    repeat,
-    repeat,
-    repeat;
-  background-position:
-    0 0,
-    95px 55px,
-    20px 180px;
-  background-size:
-    180px 137px,
-    145px 149px,
-    190px 112px;
+  background-repeat: repeat, repeat, repeat;
+  background-position: 0 0, 95px 55px, 20px 180px;
+  background-size: 180px 137px, 145px 149px, 190px 112px;
   opacity: 0.18;
   filter: brightness(1.9) sepia(0.48) hue-rotate(42deg) saturate(1.15);
 }
@@ -233,18 +224,9 @@
     url('./assets/oliva1.svg'),
     url('./assets/oliva2.svg'),
     url('./assets/oliva3.svg');
-  background-repeat:
-    repeat,
-    repeat,
-    repeat;
-  background-position:
-    0 50%,
-    95px 35%,
-    20px 65%;
-  background-size:
-    180px 137px,
-    145px 149px,
-    190px 112px;
+  background-repeat: repeat, repeat, repeat;
+  background-position: 0 50%, 95px 35%, 20px 65%;
+  background-size: 180px 137px, 145px 149px, 190px 112px;
   opacity: 0.21;
   filter: brightness(1.9) sepia(0.48) hue-rotate(42deg) saturate(1.15);
 }
@@ -257,6 +239,7 @@
   pointer-events: none;
   background: linear-gradient(90deg, rgba(13, 36, 32, 0.66), rgba(13, 36, 32, 0.28), rgba(13, 36, 32, 0.66));
 }
+
 
 .sidebar-nav-button {
   position: relative;
