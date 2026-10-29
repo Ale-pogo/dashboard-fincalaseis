@@ -201,12 +201,17 @@ export const SharedSummary = () => {
   const donutData = chartData.map((item) => ({
     name: item.name,
     value: item.percent,
+    amount: item.value,
+    amountText: currencyFormatter.format(item.value),
     fill: item.fill,
     border: item.border,
   }));
 
   const dominantBorderColor = chartData[0]?.border ?? '#c4b5fd';
-  const formatTooltip = (value) => currencyFormatter.format(value);
+  const formatTooltip = (value, name, item) => [
+    `${item?.payload?.amountText ?? currencyFormatter.format(0)} · ${Number(value).toFixed(1)}%`,
+    name,
+  ];
 
   return (
     <div className="mb-6 rounded-2xl border border-green-100 bg-gradient-to-br from-white via-emerald-50 to-white px-4 py-3 shadow-sm sm:px-5">
@@ -256,44 +261,75 @@ export const SharedSummary = () => {
           })}
         </div>
 
-        <div className="min-h-[340px] overflow-hidden rounded-3xl border border-green-100 bg-white shadow-xs" style={{ borderColor: dominantBorderColor }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={donutData}
-                dataKey="value"
-                nameKey="name"
-                innerRadius="45%"
-                outerRadius="70%"
-                paddingAngle={4}
-                labelLine={false}
-                label={({ index, percent, x, y }) => {
-                  const entry = donutData[index];
-                  return (
-                    <text
-                      x={x}
-                      y={y}
-                      textAnchor="middle"
-                      dominantBaseline="central"
-                      fill={entry?.border ?? '#000'}
-                      fontSize="0.85rem"
-                    >
-                      {`${(percent * 100).toFixed(0)}%`}
-                    </text>
-                  );
-                }}
-              >
-                {donutData.map((entry) => (
-                  <Cell key={entry.name} fill={entry.fill} />
-                ))}
-              </Pie>
-              <Tooltip
-                formatter={formatTooltip}
-                cursor={{ fill: 'rgba(16, 185, 129, 0.06)' }}
-                contentStyle={{ borderRadius: 12, borderColor: '#d8f3dc', backgroundColor: '#ffffff' }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+        <div
+          className="summary-chart relative min-h-[360px] overflow-hidden rounded-3xl border border-green-100 bg-white shadow-xs"
+          style={{ '--summary-accent': dominantBorderColor, borderColor: dominantBorderColor }}
+        >
+          <span className="summary-chart-overlay" aria-hidden="true" />
+          <div className="relative z-10 flex h-full flex-col p-2">
+            <div className="summary-donut relative min-h-[260px] flex-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={donutData}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius="44%"
+                    outerRadius="78%"
+                    paddingAngle={3}
+                    cornerRadius={7}
+                    labelLine={false}
+                    isAnimationActive
+                    animationBegin={120}
+                    animationDuration={900}
+                    label={({ index, percent, x, y }) => {
+                      const entry = donutData[index];
+                      if (!entry || percent < 0.055) return null;
+                      return (
+                        <text
+                          x={x}
+                          y={y}
+                          textAnchor="middle"
+                          dominantBaseline="central"
+                          fill="#334155"
+                          fontSize="11"
+                          fontWeight="800"
+                          className="summary-chart-label"
+                        >
+                          {`${(percent * 100).toFixed(0)}%`}
+                        </text>
+                      );
+                    }}
+                  >
+                    {donutData.map((entry) => (
+                      <Cell key={entry.name} fill={entry.fill} stroke="#ffffff" strokeWidth={2} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={formatTooltip}
+                    cursor={{ fill: 'rgba(16, 185, 129, 0.06)' }}
+                    contentStyle={{ borderRadius: 14, borderColor: '#d8f3dc', backgroundColor: '#ffffff', boxShadow: '0 12px 30px rgba(15, 23, 42, 0.12)' }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                <div className="summary-chart-center text-center">
+                  <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Total</span>
+                  <strong className="block text-base text-verde-bosque">100%</strong>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-x-2 gap-y-0 px-1 pb-0.5">
+              {chartData.map((item) => (
+                <div key={item.name} className="summary-legend-item flex min-w-0 items-center gap-1.5 rounded-md px-1 py-0.5">
+                  <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: item.border }} />
+                  <span className="min-w-0 flex-1 truncate text-[10px] leading-tight font-medium text-slate-600" title={item.name}>{item.name}</span>
+                  <strong className="tabular-nums text-[11px] leading-tight text-slate-800">{item.percent.toFixed(1)}%</strong>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 

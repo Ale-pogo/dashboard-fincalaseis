@@ -169,7 +169,7 @@ export const GastosDashboard = () => {
   return (
     <div className="mt-12">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-verde-bosque">Módulo 2: Gastos Semanales</h1>
+        <h1 className="text-2xl font-bold text-verde-bosque">Gastos Semanales</h1>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,360px)_minmax(0,1fr)] gap-6 items-start">
