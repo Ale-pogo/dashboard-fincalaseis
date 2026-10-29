@@ -26,28 +26,31 @@ function App() {
             <button
               type="button"
               onClick={() => setActiveModule('gastos')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium shadow-xs transition-all text-left ${activeModule === 'gastos' ? 'bg-verde-esmeralda text-white' : 'text-green-300 hover:bg-green-800/50'}`}
+              aria-current={activeModule === 'gastos' ? 'page' : undefined}
+              className={`sidebar-nav-button sidebar-nav-gastos ${activeModule === 'gastos' ? 'sidebar-nav-active' : ''}`}
             >
-              <BarChart3 className="w-5 h-5 text-current shrink-0" />
-              <span className="text-sm sm:text-base">Gastos Semanales</span>
+              <span className="sidebar-nav-icon"><BarChart3 className="w-5 h-5" /></span>
+              <span className="sidebar-nav-label">Gastos Semanales</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveModule('quimicos')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium shadow-xs transition-all text-left ${activeModule === 'quimicos' ? 'bg-verde-esmeralda text-white' : 'text-green-300 hover:bg-green-800/50'}`}
+              aria-current={activeModule === 'quimicos' ? 'page' : undefined}
+              className={`sidebar-nav-button sidebar-nav-quimicos ${activeModule === 'quimicos' ? 'sidebar-nav-active' : ''}`}
             >
-              <FlaskConical className="w-5 h-5 text-current shrink-0" />
-              <span className="text-sm sm:text-base">Pedidos de Químicos</span>
+              <span className="sidebar-nav-icon"><FlaskConical className="w-5 h-5" /></span>
+              <span className="sidebar-nav-label">Pedidos de Químicos</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveModule('compras')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium shadow-xs transition-all text-left ${activeModule === 'compras' ? 'bg-verde-esmeralda text-white' : 'text-green-300 hover:bg-green-800/50'}`}
+              aria-current={activeModule === 'compras' ? 'page' : undefined}
+              className={`sidebar-nav-button sidebar-nav-compras ${activeModule === 'compras' ? 'sidebar-nav-active' : ''}`}
             >
-              <ShoppingCart className="w-5 h-5 text-current shrink-0" />
-              <span className="text-sm sm:text-base">Requerimiento Compras</span>
+              <span className="sidebar-nav-icon"><ShoppingCart className="w-5 h-5" /></span>
+              <span className="sidebar-nav-label">Requerimiento Compras</span>
             </button>
           </nav>
         </aside>
