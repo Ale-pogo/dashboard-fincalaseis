@@ -14,8 +14,8 @@ function App() {
     <div className="min-h-screen bg-fondo-sitio font-sans text-current transition-colors duration-300 flex flex-col">
       <div className="flex-1 flex flex-col md:flex-row">
         {/* Barra Lateral Izquierda (Sidebar) */}
-        <aside className="relative w-full md:w-72 lg:w-80 bg-verde-bosque text-white flex flex-col shadow-xl overflow-hidden md:min-h-screen">
-          <div className="absolute inset-0 bg-gradient-to-br from-green-950/70 via-green-900/40 to-green-800/70" />
+        <aside className="sidebar-shell relative w-full md:w-72 lg:w-80 bg-verde-bosque text-white flex flex-col shadow-xl overflow-hidden md:min-h-screen">
+          <div className="absolute inset-0 z-[1] bg-gradient-to-br from-green-950/70 via-green-900/40 to-green-800/70" />
 
           <div className="relative z-10 p-4 sm:p-5 border-b border-green-800/70 flex flex-col items-center text-center">
             <img src={logoLaSeis} alt="Logo La Seis" className="h-20 w-auto sm:h-24 lg:h-28 mb-2" />
@@ -64,8 +64,8 @@ function App() {
         </main>
       </div>
 
-      <footer className="bg-[#0d2420] border-t border-[#1b4332] text-[#f5d76e]">
-        <div className="mx-auto flex flex-wrap items-center justify-center gap-3 px-4 py-4 sm:px-6 lg:px-8">
+      <footer className="app-footer bg-[#0d2420] border-t border-[#1b4332] text-[#f5d76e]">
+        <div className="relative z-[2] mx-auto flex flex-wrap items-center justify-center gap-3 px-4 py-4 sm:px-6 lg:px-8">
           <img src={logoCha} alt="CHA logo" className="h-8 w-auto" />
           <span className="text-xs text-center">© 2026 CHA - Todos los derechos reservados.</span>
         </div>

@@ -187,6 +187,77 @@
   background: rgba(248, 250, 252, 0.9);
 }
 
+.sidebar-shell {
+  background-color: #3b4d28;
+}
+
+.sidebar-shell::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    url('./assets/oliva1.svg'),
+    url('./assets/oliva2.svg'),
+    url('./assets/oliva3.svg');
+  background-repeat:
+    repeat,
+    repeat,
+    repeat;
+  background-position:
+    0 0,
+    95px 55px,
+    20px 180px;
+  background-size:
+    180px 137px,
+    145px 149px,
+    190px 112px;
+  opacity: 0.18;
+  filter: brightness(1.9) sepia(0.48) hue-rotate(42deg) saturate(1.15);
+}
+
+.app-footer {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.app-footer::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    url('./assets/oliva1.svg'),
+    url('./assets/oliva2.svg'),
+    url('./assets/oliva3.svg');
+  background-repeat:
+    repeat,
+    repeat,
+    repeat;
+  background-position:
+    0 50%,
+    95px 35%,
+    20px 65%;
+  background-size:
+    180px 137px,
+    145px 149px,
+    190px 112px;
+  opacity: 0.21;
+  filter: brightness(1.9) sepia(0.48) hue-rotate(42deg) saturate(1.15);
+}
+
+.app-footer::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(13, 36, 32, 0.66), rgba(13, 36, 32, 0.28), rgba(13, 36, 32, 0.66));
+}
+
 .sidebar-nav-button {
   position: relative;
   isolation: isolate;
