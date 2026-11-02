@@ -6,9 +6,23 @@ import { PedidosQuimicosDashboard } from './features/quimicos/PedidosQuimicosDas
 import { SharedSummary } from './components/SharedSummary';
 import logoCha from './assets/logo_cha.svg';
 import logoLaSeis from './assets/logo La Seis.svg';
+import { generatePdfReport } from './utils/generatePdfReport';
 
 function App() {
   const [activeModule, setActiveModule] = useState('gastos');
+  const [generatingPdf, setGeneratingPdf] = useState(false);
+
+  const handleGeneratePdf = async () => {
+    if (generatingPdf) return;
+    setGeneratingPdf(true);
+    try {
+      await generatePdfReport();
+    } catch (error) {
+      window.alert(`No se pudo generar el PDF: ${error.message}`);
+    } finally {
+      setGeneratingPdf(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-fondo-sitio font-sans text-current transition-colors duration-300 flex flex-col">
@@ -66,7 +80,16 @@ function App() {
 
       <footer className="app-footer bg-[#0d2420] border-t border-[#1b4332] text-[#f5d76e]">
         <div className="relative z-[2] mx-auto flex flex-wrap items-center justify-center gap-3 px-4 py-4 sm:px-6 lg:px-8">
-          <img src={logoCha} alt="CHA logo" className="h-8 w-auto" />
+          <button
+            type="button"
+            onClick={handleGeneratePdf}
+            disabled={generatingPdf}
+            className="rounded-md transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-[#f5d76e] focus:ring-offset-2 focus:ring-offset-[#0d2420] disabled:cursor-wait disabled:opacity-60"
+            aria-label="Generar reporte PDF desde los archivos Excel"
+            title="Generar reporte PDF"
+          >
+            <img src={logoCha} alt="CHA logo" className="h-8 w-auto" />
+          </button>
           <span className="text-xs text-center">© 2026 CHA - Todos los derechos reservados.</span>
         </div>
       </footer>
