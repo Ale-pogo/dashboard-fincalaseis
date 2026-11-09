@@ -34,14 +34,16 @@ const parseCurrencyValue = (value) => {
 
 const getCurrentWeekStrings = () => {
   const date = new Date();
-  const tmpDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  const dayNum = tmpDate.getUTCDay() || 7;
-  tmpDate.setUTCDate(tmpDate.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(tmpDate.getUTCFullYear(), 0, 1));
-  const weekNo = Math.ceil(((tmpDate - yearStart) / 86400000 + 1) / 7);
+  const year = date.getFullYear();
+  const currentDate = Date.UTC(year, date.getMonth(), date.getDate());
+  const yearStart = Date.UTC(year, 0, 1);
+  const dayOfYear = Math.floor((currentDate - yearStart) / 86400000) + 1;
+  const firstDayOfWeek = new Date(yearStart).getUTCDay();
+  const weekNo = Math.ceil((dayOfYear + firstDayOfWeek) / 7);
+
   return {
-    full: `${tmpDate.getUTCFullYear()}-${weekNo}`,
-    year: String(tmpDate.getUTCFullYear()),
+    full: `${year}-${weekNo}`,
+    year: String(year),
     number: String(weekNo),
     fullWeek: String(weekNo),
   };
