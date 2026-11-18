@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useSharedSummary } from '../hooks/useSharedSummary';
 import { Loader2, AlertTriangle, Factory, Leaf, Banknote, FlaskConical, Globe2, ChevronDown } from 'lucide-react';
 import { ResponsiveContainer, Tooltip, Cell, PieChart, Pie } from 'recharts';
+import { GASTO_INDICATOR_COLORS, getGastoCategory } from '../utils/gastoCategoryColors';
 
 const currencyFormatter = new Intl.NumberFormat('es-AR', {
   style: 'currency',
@@ -24,7 +25,7 @@ const summaryCards = [
     label: 'Deuda Proveedores',
     icon: Factory,
     color: '#ede9fe',
-    border: '#c4b5fd',
+    border: GASTO_INDICATOR_COLORS.deudaProveedoresUSD,
     formatter: (value) => currencyFormatter.format(value),
   },
   {
@@ -32,7 +33,7 @@ const summaryCards = [
     label: 'Deuda Fruta 25',
     icon: Leaf,
     color: '#dbeafe',
-    border: '#93c5fd',
+    border: GASTO_INDICATOR_COLORS.deudaFruta25USD,
     formatter: (value) => currencyFormatter.format(value),
   },
   {
@@ -40,7 +41,7 @@ const summaryCards = [
     label: 'Deuda Fruta 26',
     icon: Leaf,
     color: '#d1fae5',
-    border: '#6ee7b7',
+    border: GASTO_INDICATOR_COLORS.deudaFruta26USD,
     formatter: (value) => currencyFormatter.format(value),
   },
   {
@@ -48,7 +49,7 @@ const summaryCards = [
     label: 'Compras nuevas',
     icon: Banknote,
     color: '#fef3c7',
-    border: '#fde68a',
+    border: GASTO_INDICATOR_COLORS.comprasNuevasUSD,
     formatter: (value) => currencyFormatter.format(value),
   },
   {
@@ -56,7 +57,7 @@ const summaryCards = [
     label: 'Pedidos Químicos – Pendientes',
     icon: FlaskConical,
     color: '#fee2e2',
-    border: '#fecaca',
+    border: GASTO_INDICATOR_COLORS.quimicosTotalUSD,
     formatter: (value) => currencyFormatter.format(value),
   },
   {
@@ -69,34 +70,31 @@ const summaryCards = [
   },
 ];
 
-const getGastoCategory = (rubro) => {
-  const normalized = String(rubro || '').trim().toLowerCase();
-
-  if (normalized.includes('deuda fruta')) {
-    if (/\b25\b/.test(normalized)) return 'deudaFruta25USD';
-    if (/\b26\b/.test(normalized)) return 'deudaFruta26USD';
-    return 'deudaFrutaUSD';
-  }
-  if (normalized === 'deuda' || normalized.includes('deuda proveedor')) return 'deudaProveedoresUSD';
-  if (normalized.includes('nuevo') || normalized.includes('compras nueva')) return 'comprasNuevasUSD';
-  return null;
-};
-
-const ExpenseDetailsTable = ({ rows }) => (
-  <div className="overflow-x-auto max-h-96">
+const ExpenseDetailsTable = ({ rows, color }) => (
+  <div
+    className="overflow-x-auto max-h-96 rounded-lg border"
+    style={{
+      '--details-color': color,
+      backgroundColor: 'color-mix(in srgb, var(--details-color) 18%, white)',
+      borderColor: 'color-mix(in srgb, var(--details-color) 45%, white)',
+    }}
+  >
     <table className="w-full border-collapse text-left text-sm">
-      <thead className="sticky top-0 bg-green-50 text-verde-bosque">
-        <tr className="border-b border-green-100">
+      <thead
+        className="sticky top-0 text-verde-bosque"
+        style={{ backgroundColor: 'color-mix(in srgb, var(--details-color) 75%, white)' }}
+      >
+        <tr className="border-b border-white/70">
           <th className="p-3">Proveedor</th>
           <th className="p-3">Descripción</th>
           <th className="p-3 text-right">Importe U$D</th>
         </tr>
       </thead>
-      <tbody className="divide-y divide-green-50">
+      <tbody className="divide-y divide-white/70">
         {rows.length === 0 ? (
           <tr><td colSpan="3" className="p-4 text-center text-gray-500">No hay gastos para este indicador.</td></tr>
         ) : rows.map((item) => (
-          <tr key={item.id} className="hover:bg-green-50/50">
+          <tr key={item.id} className="hover:bg-white/50">
             <td className="p-3 text-gray-700">{item.proveedor}</td>
             <td className="p-3 text-gray-700">{item.descripcion}</td>
             <td className="p-3 text-right font-medium text-gray-800">{currencyFormatter.format(item.importe)}</td>
@@ -107,22 +105,32 @@ const ExpenseDetailsTable = ({ rows }) => (
   </div>
 );
 
-const ChemicalDetailsTable = ({ rows }) => (
-  <div className="overflow-x-auto max-h-96">
+const ChemicalDetailsTable = ({ rows, color }) => (
+  <div
+    className="overflow-x-auto max-h-96 rounded-lg border"
+    style={{
+      '--details-color': color,
+      backgroundColor: 'color-mix(in srgb, var(--details-color) 18%, white)',
+      borderColor: 'color-mix(in srgb, var(--details-color) 45%, white)',
+    }}
+  >
     <table className="w-full border-collapse text-left text-sm">
-      <thead className="sticky top-0 bg-green-50 text-verde-bosque">
-        <tr className="border-b border-green-100">
+      <thead
+        className="sticky top-0 text-verde-bosque"
+        style={{ backgroundColor: 'color-mix(in srgb, var(--details-color) 75%, white)' }}
+      >
+        <tr className="border-b border-white/70">
           <th className="p-3">Sector</th>
           <th className="p-3 text-right">Cantidad</th>
           <th className="p-3">U/M</th>
           <th className="p-3">Artículo</th>
         </tr>
       </thead>
-      <tbody className="divide-y divide-green-50">
+      <tbody className="divide-y divide-white/70">
         {rows.length === 0 ? (
           <tr><td colSpan="4" className="p-4 text-center text-gray-500">No hay pedidos pendientes.</td></tr>
         ) : rows.map((item) => (
-          <tr key={item.id} className="hover:bg-green-50/50">
+          <tr key={item.id} className="hover:bg-white/50">
             <td className="p-3 text-gray-700">{item.sector}</td>
             <td className="p-3 text-right text-gray-700">{item.cantidad}</td>
             <td className="p-3 text-gray-700">{item.um}</td>
@@ -138,6 +146,8 @@ export const SharedSummary = () => {
   const { summary, loading, errors, gastosData, quimicosData } = useSharedSummary();
   const [selectedCardKey, setSelectedCardKey] = useState(null);
   const selectedCard = summaryCards.find((card) => card.key === selectedCardKey);
+  const summaryBackgroundColor = selectedCard?.color
+    ?? summaryCards.find((card) => card.key === 'globalUSD').color;
   const details = useMemo(() => {
     if (!selectedCardKey) return { gastos: [], quimicos: [] };
 
@@ -214,7 +224,13 @@ export const SharedSummary = () => {
   ];
 
   return (
-    <div className="mb-6 rounded-2xl border border-green-100 bg-gradient-to-br from-white via-emerald-50 to-white px-4 py-3 shadow-sm sm:px-5">
+    <div
+      className="mb-6 rounded-2xl border border-green-100 px-4 py-3 shadow-sm sm:px-5"
+      style={{
+        '--summary-panel-color': summaryBackgroundColor,
+        backgroundImage: 'linear-gradient(to bottom right, white, color-mix(in srgb, var(--summary-panel-color) 45%, white), white)',
+      }}
+    >
       <div className="mb-2 flex items-baseline justify-between gap-4">
         <div className="flex items-baseline gap-3">
           <p className="text-xs uppercase tracking-[0.3em] text-gray-500">Resumen global</p>
@@ -341,12 +357,12 @@ export const SharedSummary = () => {
           {details.gastos.length > 0 || selectedCardKey !== 'quimicosTotalUSD' ? (
             <div className={selectedCardKey === 'globalUSD' ? 'mb-6' : ''}>
               {selectedCardKey === 'globalUSD' && <h4 className="mb-2 text-sm font-semibold text-slate-700">Gastos semanales</h4>}
-              <ExpenseDetailsTable rows={details.gastos} />
+              <ExpenseDetailsTable rows={details.gastos} color={selectedCard.color} />
             </div>
           ) : null}
           {selectedCardKey === 'globalUSD' && <h4 className="mb-2 text-sm font-semibold text-slate-700">Pedidos químicos pendientes</h4>}
           {selectedCardKey === 'quimicosTotalUSD' || selectedCardKey === 'globalUSD' ? (
-            <ChemicalDetailsTable rows={details.quimicos} />
+            <ChemicalDetailsTable rows={details.quimicos} color={selectedCard.color} />
           ) : null}
         </section>
       )}
