@@ -87,16 +87,18 @@ const ExpenseDetailsTable = ({ rows, color }) => (
         <tr className="border-b border-white/70">
           <th className="p-3">Proveedor</th>
           <th className="p-3">Descripción</th>
+          <th className="p-3">Vía</th>
           <th className="p-3 text-right">Importe U$D</th>
         </tr>
       </thead>
       <tbody className="divide-y divide-white/70">
         {rows.length === 0 ? (
-          <tr><td colSpan="3" className="p-4 text-center text-gray-500">No hay gastos para este indicador.</td></tr>
+          <tr><td colSpan="4" className="p-4 text-center text-gray-500">No hay gastos para este indicador.</td></tr>
         ) : rows.map((item) => (
           <tr key={item.id} className="hover:bg-white/50">
             <td className="p-3 text-gray-700">{item.proveedor}</td>
             <td className="p-3 text-gray-700">{item.descripcion}</td>
+            <td className="p-3 text-gray-700">{item.via}</td>
             <td className="p-3 text-right font-medium text-gray-800">{currencyFormatter.format(item.importe)}</td>
           </tr>
         ))}
